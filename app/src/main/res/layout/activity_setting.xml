@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:Lin="http://schemas.android.com/apk/res/com.mobilesafe"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="设置中心"
+        android:textSize="30sp"
+        android:background="#8866ff00"
+        android:layout_gravity="center_horizontal|center_vertical" />
+
+    <com.mobilesafe.ui.SettingItemView
+        Lin:titles="设置是否自动更新"
+        Lin:desc_on="自动更新已经打开"
+        Lin:desc_off="自动更新已经关闭"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/siv_update"  />
+
+</LinearLayout>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="功能列表"
+        android:textSize="30sp"
+        android:background="#8866ff00"
+        android:layout_gravity="center_horizontal|center_vertical" />
+
+    <com.mobilesafe.ui.FocusTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="最新的手机卫士，请下载更新，并进行体验。最新的手机卫士，请下载更新，并进行体验。"
+        android:textSize="20sp" />
+    <GridView
+        android:verticalSpacing="@dimen/gridview_vertical_space"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/gridview_margin_top"
+        android:numColumns="3"
+        android:id="@+id/gv_list_home" />
+
+
+</LinearLayout>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:Lin="http://schemas.android.com/apk/res/com.mobilesafe"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="手机防盗"
+        android:textSize="30sp"
+        android:background="#8866ff00"
+        android:layout_gravity="center_horizontal|center_vertical" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="安全密码"
+            android:layout_margin="5dp"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="XXXX"
+            android:layout_margin="5dp"
+            android:textSize="22sp"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/textView2" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#000000">
+    </View>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="防盗保护是否开启"
+            android:layout_margin="5dp"
+            android:textSize="22sp"
+            android:id="@+id/textView" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/unlock"/>
+    </RelativeLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#000000">
+    </View>
+
+    <TextView
+        android:clickable="true"
+        android:onClick="restart_navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="重新进入设置向导"
+        android:layout_margin="5dp"
+        android:textSize="22sp"
+        android:id="@+id/restart_navigation"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="#000000">
+    </View>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:background="#66000000"
+        android:text="功能简介"
+        android:layout_margin="5dp"
+        android:textSize="22sp" />
+
+    <TextView
+        style="@style/text_content_style"
+        android:text="GPS追踪:#*location*#"
+        android:drawableLeft="@mipmap/ic_launcher" />
+
+    <TextView
+        style="@style/text_content_style"
+        android:text="播放报警音乐：#*alarm*#"
+        android:drawableLeft="@mipmap/ic_launcher" />
+
+    <TextView
+        style="@style/text_content_style"
+        android:text="远程数据销毁:#*wipedata*#"
+        android:drawableLeft="@mipmap/ic_launcher" />
+
+    <TextView
+        style="@style/text_content_style"
+        android:text="远程锁屏:#*lockscreen*#"
+        android:drawableLeft="@mipmap/ic_launcher" />
+
+</LinearLayout>
