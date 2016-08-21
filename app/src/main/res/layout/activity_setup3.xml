@@ -20,14 +20,17 @@
     <EditText
         android:hint="请输入电话号码"
         android:inputType="phone"
+        android:id="@+id/et_phone_num"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
     <Button
-        android:background="@drawable/button_bg"
+        android:background="@drawable/shape_selector"
         android:text="选择联系人"
+        android:layout_margin="5dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:onClick="startSelectContactActivity"
         />
 
     <LinearLayout

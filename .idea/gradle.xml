@@ -10,12 +10,22 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/gpsdemo" />
+            <option value="$PROJECT_DIR$/menutest" />
+            <option value="$PROJECT_DIR$/readcontact" />
+            <option value="$PROJECT_DIR$/wifitest" />
+            <option value="$PROJECT_DIR$/一键锁屏" />
           </set>
         </option>
         <option name="myModules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/gpsdemo" />
+            <option value="$PROJECT_DIR$/menutest" />
+            <option value="$PROJECT_DIR$/readcontact" />
+            <option value="$PROJECT_DIR$/wifitest" />
+            <option value="$PROJECT_DIR$/一键锁屏" />
           </set>
         </option>
       </GradleProjectSettings>

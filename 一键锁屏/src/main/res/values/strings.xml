@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">一键锁屏</string>
+    <string name="sample_device_admin">一键锁屏设备管理员</string>
+    <string name="sample_device_admin_description">一键锁屏设备管理员描述</string>
+    <string name="admin_receiver_status">设备管理员接收者状态：%s</string>
+    <string name="admin_receiver_status_enabled">管理员接收状态已打开</string>
+    <string name="admin_receiver_status_disable_warning">设备管理员接收状态关闭警告</string>
+    <string name="admin_receiver_status_disabled">设备管理员接收状态关闭</string>
+    <string name="admin_receiver_status_pw_changed">密码变化</string>
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="高级工具"
+        android:textSize="30sp"
+        android:background="#8866ff00"
+        android:layout_gravity="center_horizontal|center_vertical" />
+
+    <TextView
+        android:gravity="center_vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="号码归属地查询"
+        android:textSize="26sp"
+        android:layout_marginTop="10dip"
+        android:layout_marginLeft="10dip"
+        android:drawableLeft="@android:drawable/ic_menu_camera"
+        android:clickable="true"
+        android:onClick="startNumberAddressQuery"
+        />
+
+
+</LinearLayout>

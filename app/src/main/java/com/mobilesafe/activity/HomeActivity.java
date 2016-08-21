@@ -38,7 +38,7 @@ public class HomeActivity extends BaseActivity {
 
     private List<MyItem> mListData = null; // 定义一个集合用于存储数据
     private GridViewAdapter adapter = null; // 定义一个适配器
-    private SharedPreferences sharePreferences = null; // 用于保存密码
+    private SharedPreferences sharedPreferences = null; // 用于保存密码
 
     @Override
     protected int initLayout() {
@@ -60,6 +60,10 @@ public class HomeActivity extends BaseActivity {
                     case 0:// 进入手机防盗页面
                         showLoadingFindDialog();
                         break;
+                    case 7: // 启动高级工具页面
+                        Intent intents = new Intent(HomeActivity.this, AtoolsActivity.class);
+                        startActivity(intents);
+                        break;
                     case 8:// 启动设置页面
                         Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
                         startActivity(intent);
@@ -73,7 +77,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void initData() {
         mListData = new ArrayList<MyItem>(); // new a list object
-        sharePreferences = getSharedPreferences(getResources().getString(R.string.config), Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(getResources().getString(R.string.SharedPreferencesConfig), Context.MODE_PRIVATE);
 
         String[] names = getResources().getStringArray(R.array.functions); // 获取中文名称数组
         int[] ids = {
@@ -130,7 +134,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 String password = et_setup_pwd.getText().toString().trim();// 去空格
-                String savePassword = sharePreferences.getString("password", null);// 取出加密后的密码
+                String savePassword = sharedPreferences.getString("password", null);// 取出加密后的密码
                 if (TextUtils.isEmpty(password)){
                     PromptManager.showShortToast(HomeActivity.this, "密码为空");
                     return;
@@ -158,7 +162,7 @@ public class HomeActivity extends BaseActivity {
      * @return boolean
      */
     private boolean isSetupPassword(){
-        String password = sharePreferences.getString("password", null);
+        String password = sharedPreferences.getString("password", null);
         return !TextUtils.isEmpty(password);
     }
 
@@ -193,7 +197,7 @@ public class HomeActivity extends BaseActivity {
 
                 if (password.equals(confirm)){
                     // 一致的话，就保存密码，关闭对话框，进入防盗页面
-                    SharedPreferences.Editor editor = sharePreferences.edit();
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("password", MD5Utils.md5Password(password));// 保存加密后的密码
                     editor.commit();
                     PromptManager.showShortToast(HomeActivity.this, "密码输入正确，进入手机防盗页面");

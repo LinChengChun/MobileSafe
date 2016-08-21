@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
@@ -19,7 +18,7 @@ import android.widget.TextView;
 
 import com.mobilesafe.R;
 import com.mobilesafe.base.BaseActivity;
-import com.mobilesafe.utils.FileUtil;
+import com.mobilesafe.utils.FileUtils;
 import com.mobilesafe.utils.LogUtil;
 import com.mobilesafe.utils.PromptManager;
 import com.mobilesafe.utils.StreamTools;
@@ -32,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -142,7 +142,7 @@ public class SplashActivity extends BaseActivity {
                                     LogUtil.i("HttpHandler onSuccess...");
                                     tvSplashProgress.setText(file==null?"null":file.getAbsoluteFile().toString());
 
-                                    FileUtil.installApk(getBaseContext(), file);//启动安装流程
+                                    FileUtils.installApk(getBaseContext(), file);//启动安装流程
                                 }
 
                                 @Override
@@ -188,13 +188,23 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView() {
         ButterKnife.bind(this);
+    }
 
-        sharedPreferences = getSharedPreferences(getResources().getString(R.string.config), Context.MODE_PRIVATE);
+    @Override
+    protected void initListener() {
+    }
+
+    @Override
+    protected void initData() {
+
+        copyDB(); // 拷贝数据库文件到path目录，便于查询电话归属地
+
+        sharedPreferences = getSharedPreferences(getResources().getString(R.string.SharedPreferencesConfig), Context.MODE_PRIVATE);
         boolean isUpdate = sharedPreferences.getBoolean(getResources().getString(R.string.update), false);
         if (isUpdate){ // 启动自动更新
             checkUpdate();// check weather has new version in server
         }else { // 关闭自动更新
-            mHandler.postAtTime(new Runnable() {// 延迟2s，进入主页面
+            mHandler.postDelayed(new Runnable() {// 延迟2s，进入主页面
                 @Override
                 public void run() {
                     enterHome();
@@ -207,14 +217,6 @@ public class SplashActivity extends BaseActivity {
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.2f, 1.0f);
         alphaAnimation.setDuration(1000); // 设置动画时长
         findViewById(R.id.rl_root_splash).startAnimation(alphaAnimation);
-    }
-
-    @Override
-    protected void initListener() {
-    }
-
-    @Override
-    protected void initData() {
     }
 
     /**
@@ -327,10 +329,30 @@ public class SplashActivity extends BaseActivity {
 
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
+    /**
+     * 把address.db拷贝到data/data/com.mobilesafe/files/address.db
+     */
+    private void  copyDB(){
+        // 假如数据库已经存在了，则不再拷贝该数据库
+        try {
+            File file = new File(getFilesDir(), "address.db");
+            if (file.exists() && file.length()>0){
+                LogUtil.i("file address.db is exists");
+            }else {
+                // 开始从assets目录下拷贝数据库到
+                LogUtil.i("copyDB is running");
+                InputStream is = getAssets().open("address.db");
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] buf = new byte[1024];
+                int len = 0;
+                while ( (len = is.read(buf, 0, buf.length)) >= 0){
+                    fos.write(buf, 0, len);
+                }
+                fos.close();
+                is.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

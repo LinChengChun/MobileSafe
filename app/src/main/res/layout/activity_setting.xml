@@ -22,4 +22,35 @@
         android:layout_height="wrap_content"
         android:id="@+id/siv_update"  />
 
+    <com.mobilesafe.ui.SettingItemView
+        Lin:titles="是否设置报警音乐"
+        Lin:desc_on="报警音乐已经设置"
+        Lin:desc_off="报警音乐已经关闭"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/siv_setAlarmMusic"  />
+
+    <com.mobilesafe.ui.SettingItemView
+        Lin:titles="是否打开对设备管理权限"
+        Lin:desc_on="对设备管理权限已经打开"
+        Lin:desc_off="对设备管理权限已经关闭"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/siv_openDeviceAdmin"  />
+
+    <com.mobilesafe.ui.SettingItemView
+        Lin:titles="号码归宿地显示"
+        Lin:desc_on="号码归宿地显示已经打开"
+        Lin:desc_off="号码归宿地显示已经关闭"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/siv_openPhoneAddressService"  />
+
+    <com.mobilesafe.ui.SettingClickView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        Lin:titles="归宿地提示框风格"
+        android:id="@+id/scv_setAddressBackground"
+        />
+
 </LinearLayout>

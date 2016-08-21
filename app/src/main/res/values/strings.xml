@@ -3,7 +3,14 @@
     <!--<string name="server_url">http://172.27.77.1:8080/hello/get_info.json</string>-->
     <string name="server_url">http://192.168.100.14:8080/hello/updateinfo.html</string>
 
-    <string name="config">config</string>
+    <string name="SharedPreferencesConfig">config</string>
     <string name="update">update</string>
+    <string name="admin_receiver_status">设备管理员接收器状态：%s</string>
+    <string name="admin_receiver_status_enabled">使能对设备管理权限</string>
+    <string name="admin_receiver_status_disable_warning">关闭对设备管理权限提醒</string>
+    <string name="admin_receiver_status_disabled">关闭对设备管理权限</string>
+    <string name="admin_receiver_status_pw_changed">密码已修改</string>
+    <string name="sample_device_admin">手机安全卫士设备管理接收器</string>
+    <string name="sample_device_admin_description">设备管理接收器描述：这是一个关于应用具备设备管理权限的例子</string>
 
 </resources>

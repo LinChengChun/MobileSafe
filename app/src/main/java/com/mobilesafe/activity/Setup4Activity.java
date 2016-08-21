@@ -1,30 +1,22 @@
 package com.mobilesafe.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.mobilesafe.R;
-import com.mobilesafe.base.BaseActivity;
+import com.mobilesafe.utils.LogUtil;
 import com.mobilesafe.utils.PromptManager;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Administrator on 2016/7/4.
  */
-public class Setup4Activity extends BaseActivity {
+public class Setup4Activity extends BaseSetupActivity {
 
-    @BindView(R.id.btn_prev)
-    Button btnPrev;
-    @BindView(R.id.btn_success)
-    Button btnSuccess;
-
-    private SharedPreferences sp = null;
+    private CheckBox cbSecureMode; // 用于监控是否打开监控模式
+    private Boolean isOpenSafeMode = false;
 
     @Override
     protected int initLayout() {
@@ -33,21 +25,45 @@ public class Setup4Activity extends BaseActivity {
 
     @Override
     protected void initView() {
+        cbSecureMode = retrieveView(R.id.cb_secure); // 获取CheckBox实例
+        isOpenSafeMode = sp.getBoolean("isOpenSafeMode", false);
 
-    }
+        cbSecureMode.setChecked(isOpenSafeMode);
+        if (isOpenSafeMode){
+            cbSecureMode.setText("您已经开启防盗保护");
+        }else {
+            cbSecureMode.setText("您没有开启防盗保护");
+        }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
+        cbSecureMode.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                LogUtil.i("isChecked = "+isChecked);
+                SharedPreferences.Editor editor = sp.edit();
+                // 假如已经选择，那么应该保存到 SharedPreference
+                editor.putBoolean("isOpenSafeMode", isChecked);// save configed to SharedPreference
+                editor.commit();
+
+                if (isChecked){
+                    cbSecureMode.setText("您已经开启防盗保护");
+                }else {
+                    cbSecureMode.setText("您没有开启防盗保护");
+                }
+            }
+        });
+
     }
 
     public void success(View view) {
 //        Intent i = new Intent(this, Setup4Activity.class);
 //        startActivity(i);
-//
-        sp = getSharedPreferences(getResources().getString(R.string.config), Context.MODE_PRIVATE);
+
+        isOpenSafeMode = sp.getBoolean("isOpenSafeMode", false);
+        if (!isOpenSafeMode){
+            PromptManager.showShortToast(this, "请开启防盗保护");
+            return;
+        }
+
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("configed", true);// save configed to SharedPreference
         editor.commit();// commit change
@@ -59,5 +75,15 @@ public class Setup4Activity extends BaseActivity {
         Intent i = new Intent(this, Setup3Activity.class);
         startActivity(i);
         finish();
+        overridePendingTransition(R.anim.tran_prev_in, R.anim.tran_prev_out);
+    }
+
+    @Override
+    public void showNext() {
+
+    }
+
+    @Override
+    public void showPrev() {prev(null);
     }
 }

@@ -34,7 +34,7 @@
             android:layout_margin="5dp"
             android:textSize="22sp"
             android:layout_alignParentEnd="true"
-            android:id="@+id/textView2" />
+            android:id="@+id/tv_safe_num" />
     </RelativeLayout>
 
     <View
@@ -59,6 +59,7 @@
             android:id="@+id/textView" />
 
         <ImageView
+            android:id="@+id/iv_lock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -72,12 +73,14 @@
 
     <TextView
         android:clickable="true"
+        android:background="@drawable/shape_selector"
         android:onClick="restart_navigation"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="重新进入设置向导"
         android:layout_margin="5dp"
+        android:padding="5dp"
         android:textSize="22sp"
         android:id="@+id/restart_navigation"/>
 
@@ -103,7 +106,7 @@
 
     <TextView
         style="@style/text_content_style"
-        android:text="播放报警音乐：#*alarm*#"
+        android:text="播放报警音乐:#*alarm*#"
         android:drawableLeft="@mipmap/ic_launcher" />
 
     <TextView

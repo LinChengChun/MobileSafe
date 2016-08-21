@@ -26,6 +26,7 @@
         Lin:titles="点击绑定sim卡"
         Lin:desc_on="sim卡已绑定"
         Lin:desc_off="sim卡没有绑定"
+        android:id="@+id/siv_bundled_sim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
     </com.mobilesafe.ui.SettingItemView>
