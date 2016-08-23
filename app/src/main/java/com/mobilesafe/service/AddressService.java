@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
@@ -41,6 +42,7 @@ public class AddressService extends Service{
     private int[] idDrawables = {R.drawable.call_locate_white, R.drawable.call_locate_orange,
             R.drawable.call_locate_blue, R.drawable.call_locate_gray,R.drawable.call_locate_green};
     private SharedPreferences sharedPreferences; // 定义一个私有共享属性
+    private long[] mHits = new long[2];
 
     @Nullable
     @Override
@@ -120,6 +122,19 @@ public class AddressService extends Service{
         view = View.inflate(context, R.layout.address_show, null);
         TextView textView = (TextView) view.findViewById(R.id.tv_address);
 
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.arraycopy(mHits, 1, mHits, 0, mHits.length-1);
+                mHits[mHits.length-1] = SystemClock.uptimeMillis();
+                if (mHits[0] >= (SystemClock.uptimeMillis()-500)) {
+                    params.x = (windowManager.getDefaultDisplay().getWidth()>>1)-(view.getWidth()>>1);
+                    params.y = (windowManager.getDefaultDisplay().getHeight()>>1)-(view.getHeight()>>1);
+                    windowManager.updateViewLayout(view, params);
+                }
+            }
+        });
+
         // 给view 设置触摸监听器
         view.setOnTouchListener(new View.OnTouchListener() {
             // 定义手指的初始化位置
@@ -162,7 +177,7 @@ public class AddressService extends Service{
                         startY = (int) event.getRawY();
                         break;
                 }
-                return true;// 事件处理完毕了。不要让父控件布局相应处理事件
+                return false;// 事件处理完毕了。不要让父控件布局相应处理事件
             }
         });
         LogUtil.d("弹出吐司");

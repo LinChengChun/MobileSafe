@@ -56,16 +56,21 @@ public class HomeActivity extends BaseActivity {
         gvListHome.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent; // 定义一个意图
                 switch (position){
                     case 0:// 进入手机防盗页面
                         showLoadingFindDialog();
                         break;
+                    case 1:// 进入通讯卫士页面
+                        intent = new Intent(HomeActivity.this, CallSmsSafeActivity.class);
+                        startActivity(intent);
+                        break;
                     case 7: // 启动高级工具页面
-                        Intent intents = new Intent(HomeActivity.this, AtoolsActivity.class);
-                        startActivity(intents);
+                        intent = new Intent(HomeActivity.this, AtoolsActivity.class);
+                        startActivity(intent);
                         break;
                     case 8:// 启动设置页面
-                        Intent intent = new Intent(HomeActivity.this, SettingActivity.class);
+                        intent = new Intent(HomeActivity.this, SettingActivity.class);
                         startActivity(intent);
                         break;
                     default:break;

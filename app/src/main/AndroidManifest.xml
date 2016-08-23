@@ -28,6 +28,11 @@
     <!--获取拨打目标电话权限-->
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 
+    <!--指定测试指令集-->
+    <!--<instrumentation-->
+        <!--android:name="android.test.InstrumentationTestRunner"-->
+        <!--android:targetPackage="com.mobilesafe.test" />-->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -42,6 +47,9 @@
             </intent-filter>
         </activity>
 
+        <!--指定使用测试库-->
+        <uses-library android:name="android.test.runner" />
+        
         <activity android:name=".activity.HomeActivity" />
 
         <activity android:name=".activity.SettingActivity"
@@ -63,7 +71,8 @@
 
         <activity android:name=".activity.AtoolsActivity" />
         <activity android:name=".activity.NumberAddressQueryActivity" />
-    
+        <activity android:name=".activity.CallSmsSafeActivity" />
+
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
