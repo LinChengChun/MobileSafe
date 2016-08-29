@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.View;
 
+import com.mobilesafe.db.dao.BlackNumberDao;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,13 +17,15 @@ public abstract class BaseActivity extends FragmentActivity {
     // 管理运行的所有的activity
     public final static List<BaseActivity> mActivities = new LinkedList<BaseActivity>();
     public static BaseActivity mActivity;
-
+    public static BlackNumberDao mBlackNumberDao; // 数据库操作类
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initWindow();
         setContentView(initLayout());
+
+        mBlackNumberDao = BlackNumberDao.getIntance(getBaseContext()); // 单例模式
 
         synchronized (BaseActivity.class) {
             mActivities.add(this);

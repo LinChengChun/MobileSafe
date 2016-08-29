@@ -27,5 +27,32 @@
         android:onClick="startNumberAddressQuery"
         />
 
+    <TextView
+        android:gravity="center_vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="短信备份"
+        android:textSize="26sp"
+        android:layout_marginTop="10dip"
+        android:layout_marginLeft="10dip"
+        android:drawableLeft="@android:drawable/ic_menu_camera"
+        android:clickable="true"
+        android:onClick="smsBackup"
+        />
+
+    <TextView
+        android:gravity="center_vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text="短信还原"
+        android:textSize="26sp"
+        android:layout_marginTop="10dip"
+        android:layout_marginLeft="10dip"
+        android:drawableLeft="@android:drawable/ic_menu_camera"
+        android:clickable="true"
+        android:onClick="smsRestore"
+        />
 
 </LinearLayout>

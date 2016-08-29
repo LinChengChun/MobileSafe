@@ -5,7 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.mobilesafe.bean.BlackNumberInfo;
 import com.mobilesafe.db.BlackNumberDBOpenHelper;
+import com.mobilesafe.utils.LogUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 黑名单数据库的增删改查业务类
@@ -13,24 +18,29 @@ import com.mobilesafe.db.BlackNumberDBOpenHelper;
  */
 public class BlackNumberDao {
 
+    private static BlackNumberDao mBlackNumberDao;
     private BlackNumberDBOpenHelper helper; // 定义一个帮助类
 
     /**
      * 构造方法
-     *
      * @param context 上下文
      */
-    public BlackNumberDao(Context context) {
+    private BlackNumberDao(Context context) {
         helper = new BlackNumberDBOpenHelper(context);
     }
 
+    public synchronized static BlackNumberDao getIntance(Context context){
+        if (mBlackNumberDao == null)
+            mBlackNumberDao = new BlackNumberDao(context);
+        return mBlackNumberDao;
+    }
     /**
      * 查询黑名单号码是否存在
      *
      * @param number
      * @return
      */
-    public boolean exists(String number) {
+    public boolean find(String number) {
         boolean result = false;
         SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
         Cursor cursor = db.rawQuery("select * from blacknumber where number=?", new String[]{number});
@@ -43,16 +53,36 @@ public class BlackNumberDao {
     }
 
     /**
+     * 查询黑名单号码拦截模式
+     * @param number
+     * @return 返回号码拦截模式，如果
+     */
+    public String findMode(String number) {
+        String mode = null;
+        LogUtil.d(number);
+        SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
+        Cursor cursor = db.rawQuery("select * from blacknumber where number=?", new String[]{number});
+        LogUtil.d("cursor.getColumnCount() = "+cursor.getColumnCount());
+        if (cursor.moveToNext()) {
+            mode = cursor.getString(cursor.getColumnIndex("mode"));
+        }
+        cursor.close();
+        db.close();
+        return mode;
+    }
+
+    /**
      * 添加黑名单号码
      * @param number 黑名单号码
      * @param mode 拦截模式
      */
     public void add(String number, String mode) {
         SQLiteDatabase db = helper.getWritableDatabase();
+        LogUtil.d("number = "+number+";mode = "+mode);
         ContentValues value = new ContentValues();
         value.put("number", number);
         value.put("mode", mode);
-        db.insert("blacknumber", null, value);
+        db.insert(BlackNumberDBOpenHelper.TableName, null, value);
         db.close();
     }
 
@@ -66,7 +96,7 @@ public class BlackNumberDao {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues value = new ContentValues();
         value.put("mode", newmode);
-        db.update("blacknumber", value, "where number=?", new String[]{number});
+        db.update(BlackNumberDBOpenHelper.TableName, value, "number=?", new String[]{number});
         db.close();
     }
 
@@ -76,7 +106,32 @@ public class BlackNumberDao {
      */
     public void delete(String number){
         SQLiteDatabase db = helper.getWritableDatabase();
-        db.delete("blacknumber", "where number=?", new String[]{number});
+        if (null == number)
+            db.delete(BlackNumberDBOpenHelper.TableName, null, null);
+        else
+            db.delete(BlackNumberDBOpenHelper.TableName, "number=?", new String[]{number});
         db.close();
+    }
+
+    /**
+     * 查询所有全部黑名单号码
+     * @return
+     */
+    public List<BlackNumberInfo> findAll(){
+        List<BlackNumberInfo> mList = new ArrayList<BlackNumberInfo>();
+        SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
+        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc", null );
+        while (cursor.moveToNext()) {
+            BlackNumberInfo info = new BlackNumberInfo();
+            String number = cursor.getString(0);
+            String mode = cursor.getString(1);
+            info.setNumber(number); // cursor.getColumnName(0)
+            info.setMode(mode); // cursor.getColumnName(1)
+            LogUtil.d(info.toString());
+            mList.add(info); //  添加到集合中
+        }
+        cursor.close();
+        db.close();
+        return mList;
     }
 }

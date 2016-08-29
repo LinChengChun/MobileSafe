@@ -16,6 +16,7 @@ import com.mobilesafe.base.BaseActivity;
 import com.mobilesafe.bean.MediaInfo;
 import com.mobilesafe.receiver.DeviceAdminSampleReceiver;
 import com.mobilesafe.service.AddressService;
+import com.mobilesafe.service.CallSmsSafeService;
 import com.mobilesafe.ui.SettingClickView;
 import com.mobilesafe.ui.SettingItemView;
 import com.mobilesafe.utils.LogUtil;
@@ -41,11 +42,17 @@ public class SettingActivity extends BaseActivity {
     @BindView(R.id.siv_openDeviceAdmin)
     SettingItemView sivOpenDeviceAdmin;
 
+    // 电话地址查询服务设置
     @BindView(R.id.siv_openPhoneAddressService)
     SettingItemView sivOpenPhoneAddressService;
 
+    // 设归宿地提示框风格
     @BindView(R.id.scv_setAddressBackground)
     SettingClickView scvSetAddressBackground;
+
+    // 黑名单拦截设置
+    @BindView(R.id.siv_call_sms_safe)
+    SettingItemView sivCallSmsSafe;
 
     private SharedPreferences sharedPreferences; // 定义一个私有共享属性
     private final int REQUEST_MEDIA = 123;
@@ -55,7 +62,7 @@ public class SettingActivity extends BaseActivity {
 
     private String[] items = {"半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿"};
 
-    private int which;
+    private int which; // 单选框 条目 位置
 
     @Override
     protected int initLayout() {
@@ -86,16 +93,20 @@ public class SettingActivity extends BaseActivity {
             sivOpenDeviceAdmin.setChecked(false);
         }
 
-        boolean isRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
-                "com.mobilesafe.service.AddressService");
-        if (isRunning){// 设置默认状态
-            sivOpenPhoneAddressService.setChecked(true);
-        }else {
-            sivOpenPhoneAddressService.setChecked(false);
-        }
+        // 判断 查询归宿地服务 是否启动  移植到onResume中判断
+//        boolean isRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+//                "com.mobilesafe.service.AddressService");
+//        sivOpenPhoneAddressService.setChecked(isRunning);
 
+
+        // 查询上一次设置的归宿地提示框风格，默认设置为上一次设置选项
         which = sharedPreferences.getInt("addressDialogStyle", 0);
         scvSetAddressBackground.setTvDesc(items[which]);
+
+        LogUtil.d("SettingActivity onCreate...");
+        // 黑名单拦截设置
+//        sivCallSmsSafe
+
     }
 
     @Override
@@ -157,6 +168,7 @@ public class SettingActivity extends BaseActivity {
             }
         });
 
+        // 设置归宿地查询监听
         sivOpenPhoneAddressService.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,6 +208,20 @@ public class SettingActivity extends BaseActivity {
                     }
                 });
                 builder.show();
+            }
+        });
+
+        sivCallSmsSafe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent callSmsSafeIntent = new Intent(SettingActivity.this, CallSmsSafeService.class);
+                if (sivCallSmsSafe.isChecked()){// 假如已经被选择，则取消选项
+                    stopService(callSmsSafeIntent); // 停止黑名单拦截服务
+                    sivCallSmsSafe.setChecked(false);
+                }else {
+                    startService(callSmsSafeIntent); // 启动黑名单拦截服务
+                    sivCallSmsSafe.setChecked(true);
+                }
             }
         });
     }
@@ -245,5 +271,20 @@ public class SettingActivity extends BaseActivity {
         }else {
             Toast.makeText(SettingActivity.this, "已经添加为设备管理器",Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtil.d("SettingActivity onResume...");
+        // 判断 查询归宿地服务 是否启动
+        boolean isRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+                "com.mobilesafe.service.AddressService");
+        sivOpenPhoneAddressService.setChecked(isRunning);
+
+        // 判断 查询黑名单拦截服务 是否启动
+        boolean isCallSmsServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+                "com.mobilesafe.service.CallSmsSafeService");
+        sivCallSmsSafe.setChecked(isCallSmsServiceRunning); // 恢复上一次状态
     }
 }

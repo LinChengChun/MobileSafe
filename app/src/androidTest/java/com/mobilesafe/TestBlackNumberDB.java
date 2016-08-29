@@ -1,4 +1,4 @@
-package com.mobilesafe.test;
+package com.mobilesafe;
 
 import android.test.AndroidTestCase;
 
@@ -29,6 +29,11 @@ public class TestBlackNumberDB extends AndroidTestCase{
 //        dao.delete("110");
     }
 
+    public void testDeleteAll() throws Exception{
+//        BlackNumberDao dao = new BlackNumberDao(getContext());
+//        dao.delete(null);
+    }
+
     public void testUpdate() throws Exception{
 //        BlackNumberDao dao = new BlackNumberDao(getContext());
 //        dao.update("110", "2");
@@ -38,6 +43,11 @@ public class TestBlackNumberDB extends AndroidTestCase{
 //        BlackNumberDao dao = new BlackNumberDao(getContext());
 //        boolean result = dao.find("110");
 //        assertEquals(true, result);
+    }
+
+    public void testfindAll() throws Exception{
+//        BlackNumberDao dao = new BlackNumberDao(getContext());
+//        dao.findAll();
     }
 
     public void test() throws Exception{

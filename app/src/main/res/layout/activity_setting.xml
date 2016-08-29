@@ -53,4 +53,11 @@
         android:id="@+id/scv_setAddressBackground"
         />
 
+    <com.mobilesafe.ui.SettingItemView
+        Lin:titles="黑名单拦截设置"
+        Lin:desc_on="黑名单拦截已经打开"
+        Lin:desc_off="黑名单拦截已经关闭"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/siv_call_sms_safe"  />
 </LinearLayout>
