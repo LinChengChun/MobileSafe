@@ -101,7 +101,7 @@ public class AtoolsActivity extends BaseActivity{
      */
     public void smsRestore(View view) {
         try {
-            SmsUtils.restoreSms(AtoolsActivity.this);
+            SmsUtils.restoreSms(AtoolsActivity.this, false);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (XmlPullParserException e) {

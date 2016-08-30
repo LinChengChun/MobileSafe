@@ -120,7 +120,7 @@ public class BlackNumberDao {
     public List<BlackNumberInfo> findAll(){
         List<BlackNumberInfo> mList = new ArrayList<BlackNumberInfo>();
         SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
-        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc", null );
+        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc", null ); // 根据id号降序排列
         while (cursor.moveToNext()) {
             BlackNumberInfo info = new BlackNumberInfo();
             String number = cursor.getString(0);

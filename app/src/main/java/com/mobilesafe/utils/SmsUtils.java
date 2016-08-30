@@ -1,6 +1,7 @@
 package com.mobilesafe.utils;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -108,6 +109,7 @@ public class SmsUtils {
         xmlSerializer.endTag(null, "smss");
         xmlSerializer.endDocument(); // 面向对象，有开头有结尾
         fos.close();
+        cursor.close();
     }
 
     private static String dateToString(long date){
@@ -119,7 +121,7 @@ public class SmsUtils {
      * 还原短信
      * @param context
      */
-    public static void restoreSms(Context context) throws IOException, XmlPullParserException {
+    public static void restoreSms(Context context, boolean flag) throws IOException, XmlPullParserException {
 
         // 1、读取SD卡xml的文件
         File file = new File(Environment.getExternalStorageDirectory(), "backup.xml");
@@ -131,18 +133,22 @@ public class SmsUtils {
 //        LogUtil.d("xml max = "+max);
         // 3、读取每一条短信信息，body,address,type,date
 
-        String tag;
+        String tag; // 标签名称
+        SmsInfomation smsInfomation = null; // 用于保存一条短信
         List<SmsInfomation> smsInfomationList = new ArrayList<SmsInfomation>();
         int eventType = parser.getEventType(); // 获取当前事件类型
         while (eventType != XmlPullParser.END_DOCUMENT) { // 文档结束
             tag = parser.getName(); // 返回当前标签的名称
             LogUtil.d("current Tag: "+tag);
-            SmsInfomation smsInfomation = null; // 用于保存一条短信
 
             switch (eventType) {
                 case XmlPullParser.START_DOCUMENT: // 文档开始
                     break;
                 case XmlPullParser.START_TAG:
+                    if ("smss".equals(tag)){//如果当前标签是短信集合
+                        String max = parser.getAttributeValue(null, "max");
+                        LogUtil.d("max = "+max+";count="+parser.getAttributeCount());
+                    }
                     if ("sms".equals(tag)){
                         // 一条短信开始的标签
                         smsInfomation = new SmsInfomation();
@@ -153,19 +159,22 @@ public class SmsUtils {
                         // 短信内容标签
                         String body = parser.nextText(); // 当前标签对应的属性内容
                         LogUtil.d("body = "+body);
-//                        smsInfomation.setBody(body);
+                        smsInfomation.setBody(body);
                     }else if ("address".equals(tag)){
                         // 发送者标签
                         String address = parser.nextText();
                         LogUtil.d("address = "+address);
+                        smsInfomation.setAddress(address);
                     }else if ("type".equals(tag)){
                         // 短信类型标签
                         String type = parser.nextText();
                         LogUtil.d("type = "+type);
+                        smsInfomation.setType(type);
                     }else if ("date".equals(tag)){
                         // 时间标签
                         String date = parser.nextText();
                         LogUtil.d("date = "+date);
+                        smsInfomation.setDate(date);
                     }
 
                     break;
@@ -180,18 +189,26 @@ public class SmsUtils {
             }
             eventType = parser.next(); // 获取下一个解析事件，逐行扫描
         }
+        fis.close(); // 关闭文件输入流
 
-        for (SmsInfomation infomation: smsInfomationList){
-            LogUtil.d(infomation.toString());
+        ContentResolver resolver = context.getContentResolver();
+        Uri uri = Uri.parse("content://sms/"); // 主机名为sms，参数为null
+        if (flag){ // 删除数据库中所有短信记录，再恢复
+            resolver.delete(uri, null, null);
         }
         // 4、插入到数据库
-//        ContentResolver resolver = context.getContentResolver();
-//        ContentValues values = new ContentValues();
-//        values.put("body", "");
-//        values.put("address", "");
-//        values.put("type", "");
-//        values.put("date", "");
-//        Uri uri = Uri.parse("content://sms/"); // 主机名为sms，参数为null
-//        resolver.insert(uri, values); // 将一条短信插入到数据库中
+        for (SmsInfomation infomation: smsInfomationList){
+            LogUtil.d(infomation.toString());
+
+            ContentValues values = new ContentValues();
+            values.put("body", infomation.getBody());
+            values.put("address", infomation.getAddress());
+            values.put("type", infomation.getType());
+            values.put("date", infomation.getDate());
+
+            resolver.insert(uri, values); // 将一条短信插入到数据库中
+        }
+
+        PromptManager.showLongToast(context, "恭喜，短信备份成功啦！！");
     }
 }
