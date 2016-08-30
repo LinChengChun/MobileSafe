@@ -1,7 +1,6 @@
 package com.mobilesafe.utils;
 
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -194,19 +193,19 @@ public class SmsUtils {
         ContentResolver resolver = context.getContentResolver();
         Uri uri = Uri.parse("content://sms/"); // 主机名为sms，参数为null
         if (flag){ // 删除数据库中所有短信记录，再恢复
-            resolver.delete(uri, null, null);
+//            resolver.delete(uri, null, null); //　先注释掉，不要在真机上面调试
         }
         // 4、插入到数据库
         for (SmsInfomation infomation: smsInfomationList){
             LogUtil.d(infomation.toString());
 
-            ContentValues values = new ContentValues();
-            values.put("body", infomation.getBody());
-            values.put("address", infomation.getAddress());
-            values.put("type", infomation.getType());
-            values.put("date", infomation.getDate());
-
-            resolver.insert(uri, values); // 将一条短信插入到数据库中
+//            ContentValues values = new ContentValues();
+//            values.put("body", infomation.getBody());
+//            values.put("address", infomation.getAddress());
+//            values.put("type", infomation.getType());
+//            values.put("date", infomation.getDate());
+//
+//            resolver.insert(uri, values); // 将一条短信插入到数据库中
         }
 
         PromptManager.showLongToast(context, "恭喜，短信备份成功啦！！");

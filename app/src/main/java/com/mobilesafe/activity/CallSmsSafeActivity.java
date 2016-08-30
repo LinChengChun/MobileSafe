@@ -4,15 +4,18 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.mobilesafe.R;
 import com.mobilesafe.adapter.CallSmsSafeAdapter;
 import com.mobilesafe.base.BaseActivity;
 import com.mobilesafe.bean.BlackNumberInfo;
+import com.mobilesafe.utils.LogUtil;
 import com.mobilesafe.utils.PromptManager;
 
 import java.util.List;
@@ -28,6 +31,9 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
     @BindView(R.id.lv_callsms_safe)
     ListView lvCallSmsSafe;
 
+    @BindView(R.id.ll_loading)
+    LinearLayout llLoading; // 正在加载线性布局控件
+
     private List<BlackNumberInfo> infos; // a list for save all the record
     private CallSmsSafeAdapter adapter; // 定义一个适配器
 
@@ -38,6 +44,11 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
     private Button btnOk;
     private Button btnCancel;
     private AlertDialog dialog;
+
+    private int offset = 0;
+    private int maxNumber = 20;
+    private int lengthBlackNumberOnDatabase = 0; // 数据库中黑名单记录条数
+    private boolean isLoadingFinish = false; // 是否加载完数据库标志
 
     @Override
     protected int initLayout() {
@@ -51,18 +62,95 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
 
     @Override
     protected void initListener() {
+
+        // 为Listview注册一个滚动事件的监听器
+        lvCallSmsSafe.setOnScrollListener(new AbsListView.OnScrollListener() {
+            // ListView滚动状态发生变化
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState){
+                    case SCROLL_STATE_IDLE: // 闲置状态，静止状态
+                        LogUtil.d("静止状态");
+                        int firstPosition = view.getFirstVisiblePosition();
+                        int lastPosition = view.getLastVisiblePosition();
+                        LogUtil.d("firstPosition = "+firstPosition+";lastPosition = "+lastPosition+";");
+                        if (lastPosition == infos.size()-1){
+                            LogUtil.d("列表滑动到最后一个位置，加载更多数据...");
+                            loadingData(); // loading more Data
+                        }
+                        break;
+                    case SCROLL_STATE_TOUCH_SCROLL: // 手指触摸滚动状态
+                        LogUtil.d("手指触摸滚动状态");
+                        break;
+                    case SCROLL_STATE_FLING: // 惯性滚动状态
+                        LogUtil.d("惯性滚动状态");
+                        break;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
     }
 
     @Override
     protected void initData() {
 //        mBlackNumberDao = new BlackNumberDao(CallSmsSafeActivity.this); // 实例化业务操作类
-        infos = mBlackNumberDao.findAll(); // 查询数据库
-        adapter = new CallSmsSafeAdapter(CallSmsSafeActivity.this, infos); //实例化适配器
-        lvCallSmsSafe.setAdapter(adapter); // 为Listview设置适配器
-        adapter.setOnClickListener(this); // 因为实现了对应接口，所以把该Activity设置为点击删除按钮回调接口
+        loadingData(); // loading more Data
     }
 
+    /**
+     * 从数据库加载记录到ListView
+     */
+    private void loadingData(){
+        llLoading.setVisibility(View.VISIBLE); // 显示加载进度条
+        if (isLoadingFinish){ // 如果已经加载完毕，则不再加载
+            llLoading.setVisibility(View.INVISIBLE); // 数据加载完毕应该隐藏进度条
+            PromptManager.showShortToast(CallSmsSafeActivity.this, "已经查询全部记录完毕！！");
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                infos = mBlackNumberDao.findAll(); // 查询所有黑名单记录数据库
+                if (infos == null) { // 如果集合为空，则添加到集合头部
+                    infos = mBlackNumberDao.findPart(offset, maxNumber); // 加载部分数据
+                }else {
+                    List<BlackNumberInfo> subInfos = mBlackNumberDao.findPart(offset, maxNumber);
+                    if (subInfos.isEmpty()){ // 查询数据库记录为0个，则认为已经全部加载完毕
+                        isLoadingFinish = true;
+                    }else { // 如果查询数据库不为空，则执行添加到集合流程
+                        infos.addAll(subInfos); // 添加到集合尾部
+                    }
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        llLoading.setVisibility(View.INVISIBLE); // 数据加载完毕应该隐藏进度条
+                        if (isLoadingFinish){ // 如果已经加载完毕，则不再加载
+                            PromptManager.showShortToast(CallSmsSafeActivity.this, "已经查询全部记录完毕！！");
+                            return;
+                        }
+                        if (adapter == null) {
+                            adapter = new CallSmsSafeAdapter(CallSmsSafeActivity.this, infos); //实例化适配器
+                            lvCallSmsSafe.setAdapter(adapter); // 为Listview设置适配器
+                            adapter.setOnClickListener(CallSmsSafeActivity.this); // 因为实现了对应接口，所以把该Activity设置为点击删除按钮回调接口
+                        }else {
+                            adapter.notifyDataChange(infos); // 已经创建过适配器，则刷新数据
+                        }
+                        offset += maxNumber; // 加载记录的起始位置
+                    }
+                });
+            }
+        }).start();
+    }
 
+    /**
+     * 添加黑名单对话框，监听button点击事件
+     * @param view
+     */
     public void addBlackNumber(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(CallSmsSafeActivity.this);
         dialog = builder.create();
@@ -118,6 +206,12 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
         dialog.show();
     }
 
+    /**
+     * 获取用户设置的拦截模式
+     * @param one
+     * @param two
+     * @return
+     */
     private String getCheckBoxMode(CheckBox one, CheckBox two){
         if (one.isChecked() && two.isChecked())
             return "3";

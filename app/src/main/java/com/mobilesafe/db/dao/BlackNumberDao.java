@@ -118,9 +118,45 @@ public class BlackNumberDao {
      * @return
      */
     public List<BlackNumberInfo> findAll(){
+        // 加入延时模拟加载过程
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<BlackNumberInfo> mList = new ArrayList<BlackNumberInfo>();
         SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
         Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc", null ); // 根据id号降序排列
+        while (cursor.moveToNext()) {
+            BlackNumberInfo info = new BlackNumberInfo();
+            String number = cursor.getString(0);
+            String mode = cursor.getString(1);
+            info.setNumber(number); // cursor.getColumnName(0)
+            info.setMode(mode); // cursor.getColumnName(1)
+            LogUtil.d(info.toString());
+            mList.add(info); //  添加到集合中
+        }
+        cursor.close();
+        db.close();
+        return mList;
+    }
+
+    /**
+     * 查询部分黑名单号码
+     * @param offeset 从哪个位置开始查询
+     * @param maxnumber 总共加载多少个记录
+     * @return
+     */
+    public List<BlackNumberInfo> findPart(int offeset, int maxnumber){
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<BlackNumberInfo> mList = new ArrayList<BlackNumberInfo>();
+        SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
+        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc limit ? offset ?",
+                new String[]{String.valueOf(maxnumber), String.valueOf(offeset)}); // 根据id号降序排列
         while (cursor.moveToNext()) {
             BlackNumberInfo info = new BlackNumberInfo();
             String number = cursor.getString(0);
