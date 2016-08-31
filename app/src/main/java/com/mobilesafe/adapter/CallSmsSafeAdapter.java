@@ -83,7 +83,7 @@ public class CallSmsSafeAdapter extends AppBaseAdapter<BlackNumberInfo>{
      * @param list
      */
     public void notifyDataChange(List<BlackNumberInfo> list){
-        super.notifyDataChange(mListData);
+        super.notifyDataChange(list);
         super.notifyDataSetChanged();
     }
 
