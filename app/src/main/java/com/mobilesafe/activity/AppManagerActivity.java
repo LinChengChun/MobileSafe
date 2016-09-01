@@ -14,6 +14,7 @@ import com.mobilesafe.base.BaseActivity;
 import com.mobilesafe.bean.AppInfo;
 import com.mobilesafe.engine.AppInfoProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,6 +38,10 @@ public class AppManagerActivity extends BaseActivity {
     ListView lvAppManager;
 
     private List<AppInfo> appInfos; // 集合，用于存储所有应用信息
+
+    private List<AppInfo> userAppInfos; // 用户应用集合
+    private List<AppInfo> systemAppInfos; // 系统应用集合
+
     private AppInfosAdapter adapter; // 适配器
 
     @Override
@@ -65,11 +70,24 @@ public class AppManagerActivity extends BaseActivity {
             @Override
             public void run() {
                 appInfos = AppInfoProvider.getAppInfos(AppManagerActivity.this); // 获取系统已安装所有应用信息集合
+                userAppInfos = new ArrayList<AppInfo>();
+                systemAppInfos = new ArrayList<AppInfo>();
+
+                for (AppInfo appInfo:appInfos){
+                    if (appInfo.isUserApp()){ // 判断是否是用户应用
+                        userAppInfos.add(appInfo); // 添加到用户应用集合
+                    }else {
+                        systemAppInfos.add(appInfo); // 添加到系统应用集合
+                    }
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         llAppLoading.setVisibility(View.INVISIBLE); // 加载完毕应该隐藏进度条
-                        adapter = new AppInfosAdapter(AppManagerActivity.this, appInfos); // 实例化一个适配器对象
+                        adapter = new AppInfosAdapter(AppManagerActivity.this, appInfos, userAppInfos, systemAppInfos); // 实例化一个适配器对象
+
+
                         lvAppManager.setAdapter(adapter);
                     }
                 });

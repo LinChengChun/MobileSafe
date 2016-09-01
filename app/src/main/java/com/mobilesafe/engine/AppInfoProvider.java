@@ -1,6 +1,7 @@
 package com.mobilesafe.engine;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
@@ -28,10 +29,26 @@ public class AppInfoProvider {
         for (PackageInfo packageInfo: packageInfos){
             AppInfo appInfo = new AppInfo();
             appInfo.setIcon(packageInfo.applicationInfo.loadIcon(manager)); // 加载图片资源
-            appInfo.setName(packageInfo.applicationInfo.loadLabel(manager).toString());
-            appInfo.setPackname(packageInfo.packageName);
-//            appInfo.setRom(packageInfo.applicationInfo.);
-            appInfos.add(appInfo);
+            appInfo.setName(packageInfo.applicationInfo.loadLabel(manager).toString()); // 获取应用程序名字，android:lable
+            appInfo.setPackname(packageInfo.packageName); // 获取应用包名
+            int flags = packageInfo.applicationInfo.flags; // 获取应用信息的标志位
+            if ((flags & ApplicationInfo.FLAG_SYSTEM) == 0){
+                // 用户程序
+                appInfo.setUserApp(true);
+            }else {
+                // 系统程序
+                appInfo.setUserApp(false);
+            }
+
+            if ((flags & ApplicationInfo.FLAG_EXTERNAL_STORAGE) == 0){
+                // 安装在手机内存
+                appInfo.setRom(true);
+            }else {
+                // 安装在手机外存
+                appInfo.setRom(false);
+            }
+
+            appInfos.add(appInfo); // 添加一个应用信息到集合
         }
         return appInfos;
     }
