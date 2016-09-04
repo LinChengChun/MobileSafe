@@ -10,4 +10,6 @@
     <dimen name="gridview_margin_top">10dp</dimen>
 
     <dimen name="communication_safe_height">55dip</dimen>
+
+    <dimen name="app_manager_layout_horizontal_margin">10dp</dimen>
 </resources>

@@ -69,6 +69,10 @@ public class HomeActivity extends BaseActivity {
                         intent = new Intent(HomeActivity.this, AppManagerActivity.class);
                         startActivity(intent);
                         break;
+                    case 3:// 进入程序管理页面
+                        intent = new Intent(HomeActivity.this, TaskManagerActivity.class);
+                        startActivity(intent);
+                        break;
                     case 7: // 启动高级工具页面
                         intent = new Intent(HomeActivity.this, AtoolsActivity.class);
                         startActivity(intent);

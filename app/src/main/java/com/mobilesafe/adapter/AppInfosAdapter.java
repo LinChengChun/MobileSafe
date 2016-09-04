@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/8/31.
  */
-public class AppInfosAdapter extends AppBaseAdapter<AppInfo>{
+public class AppInfosAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<AppInfo> mAppInfos;
@@ -30,7 +31,7 @@ public class AppInfosAdapter extends AppBaseAdapter<AppInfo>{
      */
     public AppInfosAdapter(Context context, List<AppInfo> list,
                            List<AppInfo> userAppInfos, List<AppInfo> systemAppInfos) {
-        super(context, list);
+//        super(context, list);
         this.mContext = context;
         this.mAppInfos = list;
         this.mUserAppInfos = userAppInfos;
@@ -43,28 +44,39 @@ public class AppInfosAdapter extends AppBaseAdapter<AppInfo>{
     }
 
     @Override
-    public View getItemView(int position, View convertView, ViewGroup parent) {
+    public Object getItem(int position) {
+        return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
         AppInfo appInfo; // = mAppInfos.get(position); // 获取当前app信息
         if (position == 0){
             TextView tv = new TextView(mContext);
-            tv.setTextColor(Color.BLUE);
+            tv.setTextSize(16.0f);
+            tv.setTextColor(Color.WHITE);
             tv.setText("用户程序 "+mUserAppInfos.size()+"个");
             tv.setBackgroundColor(Color.GRAY);
             return tv;
         }else if (position == mUserAppInfos.size()+1){
             TextView tv = new TextView(mContext);
-            tv.setTextColor(Color.BLUE);
+            tv.setTextSize(16.0f);
+            tv.setTextColor(Color.WHITE);
             tv.setText("系统程序 "+mSystemAppInfos.size()+"个");
             tv.setBackgroundColor(Color.GRAY);
             return tv;
-        }else if (position<=mUserAppInfos.size()){ // 用户程序
+        }else if (position<=mUserAppInfos.size()){ // 用户应用程序
             int newposition = position-1;
             appInfo = mUserAppInfos.get(newposition);
-        }else {
+        }else { // 系统应用程序
             int newposition = position-1-mUserAppInfos.size()-1;
             appInfo = mSystemAppInfos.get(newposition);
         }
-
 
         ViewHolder viewHolder = null;
 
@@ -78,7 +90,6 @@ public class AppInfosAdapter extends AppBaseAdapter<AppInfo>{
             viewHolder.tvAppLocation = (TextView) convertView.findViewById(R.id.tv_app_location);
             convertView.setTag(viewHolder); // 设置一个标签给convertView
         }
-
 
 //        if (position<mUserAppInfos.size()){ // 当前位置小于用户应用长度，则显示用户应用
 //            appInfo = mUserAppInfos.get(position);
@@ -109,7 +120,15 @@ public class AppInfosAdapter extends AppBaseAdapter<AppInfo>{
      * @param list
      */
     public void notifyDataChange(List<AppInfo> list){
-        super.notifyDataChange(list);
+//        super.notifyDataChange(list);
+        super.notifyDataSetChanged();
+    }
+
+    public void notifyDataChange(List<AppInfo> list, List<AppInfo> userAppInfos, List<AppInfo> systemAppInfos){
+//        super.notifyDataChange(list);
+        this.mAppInfos = list;
+        this.mUserAppInfos = userAppInfos;
+        this.mSystemAppInfos = systemAppInfos;
         super.notifyDataSetChanged();
     }
 }

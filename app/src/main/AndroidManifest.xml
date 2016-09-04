@@ -34,6 +34,9 @@
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 
     <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     
     <!--指定测试指令集-->
     <instrumentation
@@ -81,6 +84,7 @@
         <activity android:name=".activity.NumberAddressQueryActivity" />
         <activity android:name=".activity.CallSmsSafeActivity" />
         <activity android:name=".activity.AppManagerActivity" />
+        <activity android:name=".activity.TaskManagerActivity" />
 
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>
