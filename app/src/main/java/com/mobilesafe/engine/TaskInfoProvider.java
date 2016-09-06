@@ -82,7 +82,7 @@ public class TaskInfoProvider {
         for (ActivityManager.RunningServiceInfo serviceInfo: infos){
             TaskInfo taskInfo = new TaskInfo(); // 创建一个进程信息对象
 
-            String packname = serviceInfo.service.getPackageName();
+            String packname = serviceInfo.service.getPackageName(); // 服务组件的包名
             LogUtil.d("packname = "+packname);
             LogUtil.d(serviceInfo.process); // 服务运行所在进程
             taskInfo.setPackname(packname);

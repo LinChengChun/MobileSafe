@@ -31,6 +31,19 @@ public class SystemInfoUtils {
     }
 
     /**
+     * 获取正在运行的进程的数量
+     * @param context 上下文
+     * @return
+     */
+    public static int getRunningServicesCount(Context context){
+        // PackageManager 包管理器 相当于程序管理器
+        // ActivityManager 进程管理器 管理手机活动信息，获取动态内容
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> infos  = am.getRunningServices(10000);
+        return infos.size();
+    }
+
+    /**
      * 获取系统可用内存
      * @param context
      * @return

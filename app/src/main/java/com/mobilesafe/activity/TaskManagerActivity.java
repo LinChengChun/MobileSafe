@@ -2,6 +2,8 @@ package com.mobilesafe.activity;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.text.format.Formatter;
 import android.view.View;
@@ -106,7 +108,7 @@ public class TaskManagerActivity extends BaseActivity{
                         userTaskInfos.add(info);
                     else systemTaskInfos.add(info);
                 }
-                currentShowTaskInfo = allTaskInfos; // 初始化为全部进程类型显示
+//                currentShowTaskInfo = allTaskInfos; // 初始化为全部进程类型显示
 
                 // 更新设置界面
                 runOnUiThread(new Runnable() {
@@ -141,15 +143,15 @@ public class TaskManagerActivity extends BaseActivity{
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (userTaskInfos != null && systemTaskInfos != null){
-                    if (taskInfoShowMode == SHOW_ALL_TASK_INFO || taskInfoShowMode == SHOW_USER_TASK_INFO){
+//                    if (taskInfoShowMode == SHOW_ALL_TASK_INFO || taskInfoShowMode == SHOW_USER_TASK_INFO){
                         if (firstVisibleItem>userTaskInfos.size()){
                             tvProcessStatus.setText("系统进程: "+systemTaskInfos.size()+"个");
                         }else{
                             tvProcessStatus.setText("用户进程: "+userTaskInfos.size()+"个");
                         }
-                    }else {
-                        tvProcessStatus.setText("系统进程: "+systemTaskInfos.size()+"个");
-                    }
+//                    }else {
+//                        tvProcessStatus.setText("系统进程: "+systemTaskInfos.size()+"个");
+//                    }
                 }
             }
         });
@@ -171,7 +173,7 @@ public class TaskManagerActivity extends BaseActivity{
                 }
                 LogUtil.d("OnItemClick: "+taskInfo.getPackname());
 
-                if (getPackageName().equals(taskInfo.getPackname()))
+                if (getPackageName().equals(taskInfo.getPackname())) // 如果是手机卫士本身，则过滤掉，不切换CheckBox状态
                     return;
 
                 ViewHolder viewHolder = (ViewHolder) view.getTag(); // 获取当前View条目的标签
@@ -201,14 +203,21 @@ public class TaskManagerActivity extends BaseActivity{
 
         @Override
         public int getCount() {
-            int listCount = 0;
-            if (taskInfoShowMode == SHOW_ALL_TASK_INFO)
-                listCount = userTaskInfos.size()+systemTaskInfos.size()+1+1;
-            else if (taskInfoShowMode == SHOW_USER_TASK_INFO)
-                listCount = userTaskInfos.size()+1;
-            else if (taskInfoShowMode == SHOW_SYSTEM_TASK_INFO)
-                listCount = systemTaskInfos.size()+1;
-            return listCount;
+//            int listCount = 0;
+//            if (taskInfoShowMode == SHOW_ALL_TASK_INFO)
+//                listCount = userTaskInfos.size()+systemTaskInfos.size()+1+1;
+//            else if (taskInfoShowMode == SHOW_USER_TASK_INFO)
+//                listCount = userTaskInfos.size()+1;
+//            else if (taskInfoShowMode == SHOW_SYSTEM_TASK_INFO)
+//                listCount = systemTaskInfos.size()+1;
+//            return listCount;
+            SharedPreferences sp = getSharedPreferences(getResources().getString(R.string.SharedPreferencesConfig), MODE_PRIVATE);
+
+            if (sp.getBoolean("showsystem", false)){
+                return userTaskInfos.size()+1+systemTaskInfos.size()+1;
+            }else {
+                return userTaskInfos.size()+1;
+            }
         }
 
         @Override
@@ -224,7 +233,7 @@ public class TaskManagerActivity extends BaseActivity{
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             TaskInfo taskInfo = null; // 声明一个缓存当前进程信息的对象
-            if (taskInfoShowMode == SHOW_ALL_TASK_INFO || taskInfoShowMode == SHOW_USER_TASK_INFO) {
+//            if (taskInfoShowMode == SHOW_ALL_TASK_INFO || taskInfoShowMode == SHOW_USER_TASK_INFO) {
                 if (position == 0) {
                     TextView tv = new TextView(TaskManagerActivity.this);
                     tv.setTextSize(16.0f);
@@ -246,19 +255,19 @@ public class TaskManagerActivity extends BaseActivity{
                     int newposition = position - 1 - userTaskInfos.size() - 1;
                     taskInfo = systemTaskInfos.get(newposition);
                 }
-            }else {
-                if (position == 0) {
-                    TextView tv = new TextView(TaskManagerActivity.this);
-                    tv.setTextSize(16.0f);
-                    tv.setTextColor(Color.WHITE);
-                    tv.setText("系统进程: " + systemTaskInfos.size() + "个");
-                    tv.setBackgroundColor(Color.GRAY);
-                    return tv;
-                }else if (position <= systemTaskInfos.size()) { // 用户应用程序
-                    int newposition = position - 1;
-                    taskInfo = systemTaskInfos.get(newposition);
-                }
-            }
+//            }else {
+//                if (position == 0) {
+//                    TextView tv = new TextView(TaskManagerActivity.this);
+//                    tv.setTextSize(16.0f);
+//                    tv.setTextColor(Color.WHITE);
+//                    tv.setText("系统进程: " + systemTaskInfos.size() + "个");
+//                    tv.setBackgroundColor(Color.GRAY);
+//                    return tv;
+//                }else if (position <= systemTaskInfos.size()) { // 用户应用程序
+//                    int newposition = position - 1;
+//                    taskInfo = systemTaskInfos.get(newposition);
+//                }
+//            }
             ViewHolder viewHolder;
             if (convertView!=null && convertView instanceof RelativeLayout){ // View对象可以被复用
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -302,7 +311,8 @@ public class TaskManagerActivity extends BaseActivity{
      * @param view
      */
     public void selectAll(View view) {
-        for (TaskInfo info: currentShowTaskInfo){
+//        for (TaskInfo info: currentShowTaskInfo){
+        for (TaskInfo info: allTaskInfos){
             if (getPackageName().equals(info.getPackname()))
                 continue;
             info.setChecked(true);
@@ -315,7 +325,8 @@ public class TaskManagerActivity extends BaseActivity{
      * @param view
      */
     public void selectOppo(View view) {
-        for (TaskInfo info: currentShowTaskInfo){
+//        for (TaskInfo info: currentShowTaskInfo){
+        for (TaskInfo info: allTaskInfos){
             if (getPackageName().equals(info.getPackname()))
                 continue;
             info.setChecked(!info.isChecked());
@@ -328,13 +339,13 @@ public class TaskManagerActivity extends BaseActivity{
      * @param view
      */
     public void killAll(View view) {
-        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE); // 获取系统活动管理服务
         int count= 0; // 用于计数杀掉了几个进程
         long sumSize = 0; // 用于计数释放了多少空间
         List<TaskInfo> killTaskInfos = new ArrayList<TaskInfo>(); // 保存被杀死进程的集合
         for (TaskInfo info: allTaskInfos){
             if (info.isChecked()){ // 该条目被勾选，杀死这个进程
-                am.killBackgroundProcesses(info.getPackname());
+                am.killBackgroundProcesses(info.getPackname()); // 杀掉后台进程
                 if (info.isUserTask()){ // 判断是属于用户应用还是系统应用，从集合中移除
                     userTaskInfos.remove(info);
                 }else {
@@ -411,4 +422,18 @@ public class TaskManagerActivity extends BaseActivity{
         dialog.show(); // 显示对话框
     }
 
+    /**
+     * 用于进入设置页面
+     * @param view
+     */
+    public void enterSetting(View view){
+        Intent intent = new Intent(TaskManagerActivity.this, TaskSettingActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        adapter.notifyDataSetChanged(); // 刷新列表
+    }
 }

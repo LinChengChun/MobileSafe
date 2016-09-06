@@ -106,6 +106,7 @@ public class CallSmsSafeService extends Service {
             switch (state){
                 case TelephonyManager.CALL_STATE_RINGING: // 电话铃声响起的时候，来电时
                     String result = dao.findMode(incomingNumber); // 查询拦截模式
+//                    String result = "3"; // 查询拦截模式
                     if ("1".equals(result) || "3".equals(result)){
                         LogUtil.d("该电话已经被设置为电话拦截，挂断电话");
                         getContentResolver().registerContentObserver(CallLog.CONTENT_URI, true, new CallLogObserver(incomingNumber, new Handler()));
@@ -114,7 +115,7 @@ public class CallSmsSafeService extends Service {
                     break;
                 case TelephonyManager.CALL_STATE_IDLE: // 电话闲置
                     break;
-                case TelephonyManager.CALL_STATE_OFFHOOK: //
+                case TelephonyManager.CALL_STATE_OFFHOOK: // 离线状态
                     break;
             }
 

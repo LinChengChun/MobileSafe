@@ -62,9 +62,11 @@ public class BlackNumberDao {
         LogUtil.d(number);
         SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
         Cursor cursor = db.rawQuery("select * from blacknumber where number=?", new String[]{number});
-        LogUtil.d("cursor.getColumnCount() = "+cursor.getColumnCount());
+//        LogUtil.d("cursor.getColumnCount() = "+cursor.getColumnCount());
+//        LogUtil.d("cursor.getColumnIndex(mode) = "+cursor.getColumnIndex("mode"));
         if (cursor.moveToNext()) {
-            mode = cursor.getString(cursor.getColumnIndex("mode"));
+//            mode = cursor.getString(cursor.getColumnIndex("mode"));
+            mode = cursor.getString(2);
         }
         cursor.close();
         db.close();
