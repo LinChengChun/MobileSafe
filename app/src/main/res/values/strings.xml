@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MobileSafe</string>
+    <string name="app_name">安全卫士</string>
     <!--<string name="server_url">http://172.27.77.1:8080/hello/get_info.json</string>-->
     <string name="server_url">http://192.168.100.14:8080/hello/updateinfo.html</string>
 

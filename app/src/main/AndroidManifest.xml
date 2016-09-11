@@ -37,6 +37,8 @@
     <uses-permission android:name="android.permission.WRITE_SMS" />
 
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
     
     <!--指定测试指令集-->
     <instrumentation
@@ -86,6 +88,9 @@
         <activity android:name=".activity.AppManagerActivity" />
         <activity android:name=".activity.TaskManagerActivity" />
         <activity android:name=".activity.TaskSettingActivity" />
+        <activity android:name=".activity.EnterPwdActivity"
+            android:launchMode="singleInstance"
+            android:excludeFromRecents="true"/>
 
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>
@@ -130,6 +135,7 @@
         <service android:name=".service.CallSmsSafeService" />
         <service android:name=".service.AutoCleanService" />
         <service android:name=".service.UpdateWidgetService" />
+        <service android:name=".service.WatchDogService" />
     </application>
 
 </manifest>

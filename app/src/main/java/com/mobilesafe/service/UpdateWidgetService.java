@@ -3,8 +3,11 @@ package com.mobilesafe.service;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.format.Formatter;
@@ -24,9 +27,10 @@ import java.util.TimerTask;
 public class UpdateWidgetService extends Service{
 
     private final String TAG = "UpdateWidgetService: ";
-    private Timer timer;
-    private TimerTask timerTask;
-    private AppWidgetManager awm;
+    private Timer timer; // 定时器
+    private TimerTask timerTask; // 定时器任务
+    private AppWidgetManager awm; // widget管理器
+    private ScreenStateReceiver mScreenStateReceiver; // 定义一个广播状态接收者
 
     @Nullable
     @Override
@@ -39,7 +43,21 @@ public class UpdateWidgetService extends Service{
 
         LogUtil.d(TAG+"onCreate");
 
-        awm = AppWidgetManager.getInstance(this);
+        awm = AppWidgetManager.getInstance(this); // 获取管理器
+        startTimer(); // 启动定时器
+
+        mScreenStateReceiver = new ScreenStateReceiver(); // 实例化广播接收者
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(mScreenStateReceiver, intentFilter); // 注册receiver
+        super.onCreate();
+    }
+
+    /**
+     * 启动定时器
+     */
+    private void startTimer() {
         timer = new Timer();
         timerTask = new TimerTask() {
             @Override
@@ -61,18 +79,52 @@ public class UpdateWidgetService extends Service{
             }
         };
         timer.schedule(timerTask, 0, 3000);
-        super.onCreate();
     }
 
     @Override
     public void onDestroy() {
         LogUtil.d(TAG+"onDestroy");
-
-        timer.cancel();
-        timerTask.cancel();
-        timer = null;
-        timerTask = null;
-
+        if (mScreenStateReceiver!=null) {
+            unregisterReceiver(mScreenStateReceiver);
+            mScreenStateReceiver = null;
+        }
+        stopTimer(); // 停止定时器
         super.onDestroy();
+    }
+
+    /**
+     * 停止定时器
+     */
+    private void stopTimer() {
+        if (timer!=null && timerTask!=null) {
+            timer.cancel();
+            timerTask.cancel();
+            timer = null;
+            timerTask = null;
+        }
+    }
+
+    /**
+     * 用于监听屏幕状态广播接收者
+     */
+    private class ScreenStateReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction(); // 获取动作
+            LogUtil.d(TAG+"action = "+action);
+
+            switch (action){
+                case Intent.ACTION_SCREEN_OFF:
+                    LogUtil.d(TAG+"屏幕锁屏了");
+                    stopTimer();
+                    break;
+                case Intent.ACTION_SCREEN_ON:
+                    LogUtil.d(TAG+"屏幕解锁了");
+                    startTimer();
+                    break;
+                default:break;
+            }
+        }
     }
 }

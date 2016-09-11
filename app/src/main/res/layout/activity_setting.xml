@@ -60,4 +60,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/siv_call_sms_safe"  />
+
+    <com.mobilesafe.ui.SettingItemView
+        Lin:titles="程序锁设置"
+        Lin:desc_on="看门狗已经开启"
+        Lin:desc_off="看门狗已经关闭"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/siv_watch_dog"  />
 </LinearLayout>

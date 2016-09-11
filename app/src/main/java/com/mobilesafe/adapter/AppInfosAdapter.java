@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.mobilesafe.R;
 import com.mobilesafe.bean.AppInfo;
+import com.mobilesafe.db.dao.AppLockDao;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class AppInfosAdapter extends BaseAdapter {
     private List<AppInfo> mAppInfos;
     private List<AppInfo> mUserAppInfos; // 用户应用集合
     private List<AppInfo> mSystemAppInfos; // 系统应用集合
+    private AppLockDao appLockDao; // 数据库操作类
 
     /**
      * 构造器
@@ -36,6 +38,7 @@ public class AppInfosAdapter extends BaseAdapter {
         this.mAppInfos = list;
         this.mUserAppInfos = userAppInfos;
         this.mSystemAppInfos = systemAppInfos;
+        appLockDao = AppLockDao.getIntance(context);
     }
 
     @Override
@@ -88,6 +91,7 @@ public class AppInfosAdapter extends BaseAdapter {
             viewHolder.ivAppIcon = (ImageView) convertView.findViewById(R.id.iv_app_icon);
             viewHolder.tvAppName = (TextView) convertView.findViewById(R.id.tv_app_name);
             viewHolder.tvAppLocation = (TextView) convertView.findViewById(R.id.tv_app_location);
+            viewHolder.ivStatus = (ImageView) convertView.findViewById(R.id.iv_status);
             convertView.setTag(viewHolder); // 设置一个标签给convertView
         }
 
@@ -106,13 +110,55 @@ public class AppInfosAdapter extends BaseAdapter {
             viewHolder.tvAppLocation.setText("外部存储");
         }
 
+        if (appLockDao.find(appInfo.getPackname())){ // 查询数据库，是否有该应用锁定记录
+            viewHolder.ivStatus.setImageResource(R.drawable.lock);
+        }else {
+            viewHolder.ivStatus.setImageResource(R.drawable.unlock);
+        }
+
         return convertView;
     }
 
-    static class ViewHolder{
+    /**
+     * 缓存类
+     */
+    public static class ViewHolder{
         ImageView ivAppIcon;
         TextView tvAppName;
         TextView tvAppLocation;
+        ImageView ivStatus;
+
+        public ImageView getIvAppIcon() {
+            return ivAppIcon;
+        }
+
+        public void setIvAppIcon(ImageView ivAppIcon) {
+            this.ivAppIcon = ivAppIcon;
+        }
+
+        public TextView getTvAppName() {
+            return tvAppName;
+        }
+
+        public void setTvAppName(TextView tvAppName) {
+            this.tvAppName = tvAppName;
+        }
+
+        public TextView getTvAppLocation() {
+            return tvAppLocation;
+        }
+
+        public void setTvAppLocation(TextView tvAppLocation) {
+            this.tvAppLocation = tvAppLocation;
+        }
+
+        public ImageView getIvStatus() {
+            return ivStatus;
+        }
+
+        public void setIvStatus(ImageView ivStatus) {
+            this.ivStatus = ivStatus;
+        }
     }
 
     /**

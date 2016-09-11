@@ -34,4 +34,12 @@
         android:textSize="16sp"
         android:text="安装位置"/>
 
+    <ImageView
+        android:id="@+id/iv_status"
+        android:layout_width="25dip"
+        android:layout_height="25dip"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/lock"/>
 </RelativeLayout>

@@ -25,6 +25,7 @@ import com.mobilesafe.R;
 import com.mobilesafe.adapter.AppInfosAdapter;
 import com.mobilesafe.base.BaseActivity;
 import com.mobilesafe.bean.AppInfo;
+import com.mobilesafe.db.dao.AppLockDao;
 import com.mobilesafe.engine.AppInfoProvider;
 import com.mobilesafe.utils.DesityUtil;
 import com.mobilesafe.utils.LogUtil;
@@ -62,6 +63,7 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
     private List<AppInfo> systemAppInfos; // 系统应用集合
 
     private AppInfosAdapter adapter; // 适配器
+    private AppLockDao appLockDao; // 数据库操作类
 
     private PopupWindow popupWindow; // 弹出式窗体
     private LinearLayout llStart; // 用于启动应用
@@ -138,7 +140,7 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
                 view.getLocationInWindow(location); // 获取当前被点击view的在窗体中的位置
                 LogUtil.d("location[0] = "+location[0]+";location[1] = "+location[1]);
                 int dip = 60;
-                int px = DesityUtil.dip2px(AppManagerActivity.this, dip);
+                int px = DesityUtil.dip2px(AppManagerActivity.this, dip); // 单位转换 dp<->px
                 LogUtil.d("px = "+px);
                 popupWindow.showAtLocation(parent, Gravity.LEFT|Gravity.TOP, location[0]+px , location[1]);
 
@@ -165,10 +167,45 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
 
             }
         });
+
+        lvAppManager.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position == 0){
+                    return true;
+                }else if (position == userAppInfos.size()+1){
+                    return true;
+                }else if (position <= userAppInfos.size()){ // 用户应用
+                    int newposition = position-1;
+                    appInfo = userAppInfos.get(newposition);
+                }else { // 系统应用
+                    int newposition = position-1-userAppInfos.size()-1;
+                    appInfo = systemAppInfos.get(newposition);
+                }
+                LogUtil.d("长点击了: "+appInfo.getPackname());
+
+                AppInfosAdapter.ViewHolder viewHolder = (AppInfosAdapter.ViewHolder) view.getTag();
+                // 判断条目是否存在程序锁数据库界面
+                if (appLockDao.find(appInfo.getPackname())){
+                    // 被锁定的程序，解除锁定，更新界面为打开的小锁图片
+                    appLockDao.delete(appInfo.getPackname());
+                    viewHolder.getIvStatus().setImageResource(R.drawable.unlock);
+                }else {
+                    // 锁定程序，更新界面为关闭的锁
+                    appLockDao.add(appInfo.getPackname());
+                    viewHolder.getIvStatus().setImageResource(R.drawable.lock);
+                }
+                return true;
+            }
+        });
     }
 
     @Override
     protected void initData() {
+
+        appLockDao = AppLockDao.getIntance(AppManagerActivity.this); // 获取Dao实例
+
         long availRomSize = getAvailSpace(Environment.getDataDirectory().getAbsolutePath()); // 获取可用内存大小
         long availSdSize = getAvailSpace(Environment.getExternalStorageDirectory().getAbsolutePath()); // 获取SD卡可用内存大小
         tvAvailRom.setText("内存可用: "+ Formatter.formatFileSize(AppManagerActivity.this, availRomSize));
@@ -190,6 +227,10 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
         return size * count;
     }
 
+    /**
+     * 关闭下拉窗体
+     * @param window
+     */
     private void dismissPopupWindow(PopupWindow window){
         if ( null!=window && window.isShowing() ){ // 滚动时检测是否已经显示
             window.dismiss();
@@ -288,7 +329,7 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
                             adapter = new AppInfosAdapter(AppManagerActivity.this, appInfos, userAppInfos, systemAppInfos); // 实例化一个适配器对象
                             lvAppManager.setAdapter(adapter);
                         }else {
-                            adapter.notifyDataChange(appInfos, userAppInfos, systemAppInfos);
+                            adapter.notifyDataChange(appInfos, userAppInfos, systemAppInfos); // 已经实例化过适配器，则刷新ListView
                         }
                         tvStatus.setText("用户应用："+userAppInfos.size()+"个"); // 集合填充完毕，则开始显示
                         tvStatus.setVisibility(View.VISIBLE); // 加载完毕时，显示应用个数

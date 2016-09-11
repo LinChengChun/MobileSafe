@@ -17,6 +17,7 @@ import com.mobilesafe.bean.MediaInfo;
 import com.mobilesafe.receiver.DeviceAdminSampleReceiver;
 import com.mobilesafe.service.AddressService;
 import com.mobilesafe.service.CallSmsSafeService;
+import com.mobilesafe.service.WatchDogService;
 import com.mobilesafe.ui.SettingClickView;
 import com.mobilesafe.ui.SettingItemView;
 import com.mobilesafe.utils.LogUtil;
@@ -53,6 +54,10 @@ public class SettingActivity extends BaseActivity {
     // 黑名单拦截设置
     @BindView(R.id.siv_call_sms_safe)
     SettingItemView sivCallSmsSafe;
+
+    // 看门狗设置
+    @BindView(R.id.siv_watch_dog)
+    SettingItemView sivWatchDog;
 
     private SharedPreferences sharedPreferences; // 定义一个私有共享属性
     private final int REQUEST_MEDIA = 123;
@@ -224,6 +229,20 @@ public class SettingActivity extends BaseActivity {
                 }
             }
         });
+
+        sivWatchDog.setOnClickListener(new View.OnClickListener() {
+            Intent watchIntent = new Intent(SettingActivity.this, WatchDogService.class);
+            @Override
+            public void onClick(View v) {
+                if (sivWatchDog.isChecked()){// 假如已经被选择，则取消选项
+                    stopService(watchIntent); // 停止看门狗服务
+                    sivWatchDog.setChecked(false);
+                }else {
+                    startService(watchIntent); // 启动看门狗服务
+                    sivWatchDog.setChecked(true);
+                }
+            }
+        });
     }
 
     /**
@@ -286,5 +305,10 @@ public class SettingActivity extends BaseActivity {
         boolean isCallSmsServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
                 "com.mobilesafe.service.CallSmsSafeService");
         sivCallSmsSafe.setChecked(isCallSmsServiceRunning); // 恢复上一次状态
+
+        // 判断 看门狗服务 是否启动
+        boolean isWatchDogServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this,
+                "com.mobilesafe.service.WatchDogService");
+        sivWatchDog.setChecked(isWatchDogServiceRunning); // 恢复上一次状态
     }
 }
