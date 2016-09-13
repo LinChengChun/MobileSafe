@@ -105,9 +105,9 @@ public class AppInfosAdapter extends BaseAdapter {
         viewHolder.ivAppIcon.setImageDrawable(appInfo.getIcon()); // 设置小图标
         viewHolder.tvAppName.setText(appInfo.getName());
         if (appInfo.isRom()){ // 判断是否安装在手机内存
-            viewHolder.tvAppLocation.setText("手机内存");
+            viewHolder.tvAppLocation.setText("手机内存 "+"uid:"+appInfo.getUid());
         }else {
-            viewHolder.tvAppLocation.setText("外部存储");
+            viewHolder.tvAppLocation.setText("外部存储 "+"uid:"+appInfo.getUid());
         }
 
         if (appLockDao.find(appInfo.getPackname())){ // 查询数据库，是否有该应用锁定记录

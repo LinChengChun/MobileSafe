@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:layout_width="300dip"
+        android:layout_height="match_parent">
+    </View>
+
+    <SlidingDrawer
+        android:id="@+id/sd_mydrawer"
+        android:handle="@+id/my_handle"
+        android:content="@+id/my_content"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--把手的布局-->
+        <ImageView
+            android:id="@+id/my_handle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/lock"/>
+
+        <!--内容的布局-->
+        <LinearLayout
+            android:id="@+id/my_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/gold"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hello world"
+                android:textSize="22sp"/>
+        </LinearLayout>
+
+    </SlidingDrawer>
+
+</LinearLayout>

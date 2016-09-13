@@ -73,6 +73,14 @@ public class HomeActivity extends BaseActivity {
                         intent = new Intent(HomeActivity.this, TaskManagerActivity.class);
                         startActivity(intent);
                         break;
+                    case 4:// 进入流量统计页面
+                        intent = new Intent(HomeActivity.this, TrafficManagerActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 5:// 进入手机杀毒页面
+                        intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
+                        startActivity(intent);
+                        break;
                     case 7: // 启动高级工具页面
                         intent = new Intent(HomeActivity.this, AtoolsActivity.class);
                         startActivity(intent);

@@ -91,6 +91,8 @@
         <activity android:name=".activity.EnterPwdActivity"
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"/>
+        <activity android:name=".activity.TrafficManagerActivity" />
+        <activity android:name=".activity.AntiVirusActivity" />
 
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>

@@ -13,6 +13,15 @@ public class AppInfo {
     private String packname; // 包名
     private boolean isRom; // 是否安装在内存
     private boolean userApp; // 是否用户应用
+    private int uid;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 
     public Drawable getIcon() {
         return icon;

@@ -19,7 +19,6 @@ import android.telephony.TelephonyManager;
 
 import com.android.internal.telephony.ITelephony;
 import com.mobilesafe.activity.CallSmsSafeActivity;
-import com.mobilesafe.base.BaseActivity;
 import com.mobilesafe.db.dao.BlackNumberDao;
 import com.mobilesafe.utils.LogUtil;
 
@@ -53,7 +52,7 @@ public class CallSmsSafeService extends Service {
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
         filter.setPriority(99999999); // 设置广播优先级
         registerReceiver(receiver, filter); // 注册广播
-        dao = BaseActivity.mBlackNumberDao;  // 实例化数据库业务类
+        dao = BlackNumberDao.getIntance(this); // 实例化数据库业务类
 
         telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE); // 获取电话管理器服务
         listener = new MyListener(); // 实例化监听器

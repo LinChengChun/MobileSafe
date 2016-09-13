@@ -32,6 +32,7 @@ public class AppInfoProvider {
             appInfo.setName(packageInfo.applicationInfo.loadLabel(manager).toString()); // 获取应用程序名字，android:lable
             appInfo.setPackname(packageInfo.packageName); // 获取应用包名
             int flags = packageInfo.applicationInfo.flags; // 获取应用信息的标志位
+
             if ((flags & ApplicationInfo.FLAG_SYSTEM) == 0){
                 // 用户程序
                 appInfo.setUserApp(true);
@@ -47,6 +48,11 @@ public class AppInfoProvider {
                 // 安装在手机外存
                 appInfo.setRom(false);
             }
+            int uid = packageInfo.applicationInfo.uid;
+            appInfo.setUid(uid);
+
+//            File rcvfile = new File("/proc/uid_stat/"+uid+"tcp_rcv");
+//            File sndfile = new File("/proc/uid_stat/"+uid+"tcp_snd");
 
             appInfos.add(appInfo); // 添加一个应用信息到集合
         }

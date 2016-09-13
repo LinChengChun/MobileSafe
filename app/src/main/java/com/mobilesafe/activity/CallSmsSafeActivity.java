@@ -15,6 +15,7 @@ import com.mobilesafe.R;
 import com.mobilesafe.adapter.CallSmsSafeAdapter;
 import com.mobilesafe.base.BaseActivity;
 import com.mobilesafe.bean.BlackNumberInfo;
+import com.mobilesafe.db.dao.BlackNumberDao;
 import com.mobilesafe.utils.LogUtil;
 import com.mobilesafe.utils.PromptManager;
 
@@ -49,6 +50,7 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
     private int maxNumber = 20;
     private int lengthBlackNumberOnDatabase = 0; // 数据库中黑名单记录条数
     private boolean isLoadingFinish = false; // 是否加载完数据库标志
+    private BlackNumberDao mBlackNumberDao;
 
     @Override
     protected int initLayout() {
@@ -97,7 +99,7 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
 
     @Override
     protected void initData() {
-//        mBlackNumberDao = new BlackNumberDao(CallSmsSafeActivity.this); // 实例化业务操作类
+        mBlackNumberDao = BlackNumberDao.getIntance(CallSmsSafeActivity.this); // 实例化业务操作类
         loadingData(); // loading more Data
     }
 
@@ -171,7 +173,7 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
                     PromptManager.showShortToast(CallSmsSafeActivity.this, "黑名单号码不能为空");
                     return;
                 }
-                String mode = getCheckBoxMode(cbPhone, cbSms);
+                String mode = getCheckBoxMode(cbPhone, cbSms); // 根据CheckBox状态，获取拦截模式
                 if (mode.equals("0")){
                     PromptManager.showShortToast(CallSmsSafeActivity.this, "请选择拦截模式");
                     return;
@@ -187,10 +189,10 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
                     mBlackNumberDao.add(number, mode); // 把该黑名单电话添加到数据库中
                 }
                 // infos.add(info); // 把对象添加到集合末尾
-                infos.add(0, info);
+                infos.add(0, info); // 把对象添加到集合头部
                 adapter.notifyDataChange(infos); // 适配器通知ListView数据已经发生改变
 
-                dialog.dismiss();
+                dialog.dismiss(); // 关闭对话框
             }
         });
 
