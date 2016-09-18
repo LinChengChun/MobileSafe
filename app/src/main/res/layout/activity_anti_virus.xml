@@ -41,10 +41,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_scan_status"
                 android:layout_marginTop="12dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:text="正在扫描..."
                 android:textColor="@color/black"
                 android:textSize="22sp"/>
@@ -64,5 +66,12 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </LinearLayout>
 
 </LinearLayout>

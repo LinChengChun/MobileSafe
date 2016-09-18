@@ -81,6 +81,10 @@ public class HomeActivity extends BaseActivity {
                         intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
                         startActivity(intent);
                         break;
+                    case 6:// 进入清楚缓存页面
+                        intent = new Intent(HomeActivity.this, CleanCacheActivity.class);
+                        startActivity(intent);
+                        break;
                     case 7: // 启动高级工具页面
                         intent = new Intent(HomeActivity.this, AtoolsActivity.class);
                         startActivity(intent);

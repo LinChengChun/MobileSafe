@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/tv_cache_name"
+        android:textSize="20sp"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="程序名称"/>
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/tv_cache_name"
+        android:id="@+id/tv_cache_size"
+        android:textSize="16sp"
+        android:textColor="@color/grey"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="缓存大小"/>
+
+    <ImageView
+        android:id="@+id/iv_cache_delete"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete_btn"/>
+    
+    <View
+        android:layout_below="@+id/tv_cache_size"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#88000000">
+    </View>
+</RelativeLayout>

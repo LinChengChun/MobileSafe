@@ -39,6 +39,8 @@
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
     
     <!--指定测试指令集-->
     <instrumentation
@@ -92,7 +94,9 @@
             android:launchMode="singleInstance"
             android:excludeFromRecents="true"/>
         <activity android:name=".activity.TrafficManagerActivity" />
-        <activity android:name=".activity.AntiVirusActivity" />
+        <activity android:name=".activity.AntiVirusActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity android:name=".activity.CleanCacheActivity" />
 
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>

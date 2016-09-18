@@ -197,7 +197,8 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initData() {
 
-        copyDB(); // 拷贝数据库文件到path目录，便于查询电话归属地
+        copyDB("address.db"); // 拷贝数据库文件到path目录，便于查询电话归属地
+        copyDB("antivirus.db"); // 拷贝病毒数据库
 
         sharedPreferences = getSharedPreferences(getResources().getString(R.string.SharedPreferencesConfig), Context.MODE_PRIVATE);
         boolean isUpdate = sharedPreferences.getBoolean(getResources().getString(R.string.update), false);
@@ -332,16 +333,16 @@ public class SplashActivity extends BaseActivity {
     /**
      * 把address.db拷贝到data/data/com.mobilesafe/files/address.db
      */
-    private void  copyDB(){
+    private void  copyDB(String fileName){
         // 假如数据库已经存在了，则不再拷贝该数据库
         try {
-            File file = new File(getFilesDir(), "address.db");
+            File file = new File(getFilesDir(), fileName);
             if (file.exists() && file.length()>0){
-                LogUtil.i("file address.db is exists");
+                LogUtil.i("file "+fileName+" is exists");
             }else {
-                // 开始从assets目录下拷贝数据库到
+                // 开始从assets目录下拷贝数据库到data安装目录下
                 LogUtil.i("copyDB is running");
-                InputStream is = getAssets().open("address.db");
+                InputStream is = getAssets().open(fileName);
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] buf = new byte[1024];
                 int len = 0;
