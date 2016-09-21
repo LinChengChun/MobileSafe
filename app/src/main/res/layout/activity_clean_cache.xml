@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/ll_root_clean_cache">
 
     <TextView
         android:layout_width="match_parent"
@@ -32,18 +33,19 @@
 
     </FrameLayout>
 
-    <ScrollView
+    <com.mobilesafe.ui.ClickScrollView
         android:layout_weight="1000"
+        android:id="@+id/sv_clean_cache"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <LinearLayout
+        <com.mobilesafe.ui.ClickLinearLayout
             android:id="@+id/ll_clean_cache"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        </LinearLayout>
-    </ScrollView>
+        </com.mobilesafe.ui.ClickLinearLayout>
+    </com.mobilesafe.ui.ClickScrollView>
 
     <Button
         android:layout_width="match_parent"

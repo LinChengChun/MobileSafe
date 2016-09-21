@@ -23,6 +23,7 @@
         android:text="缓存大小"/>
 
     <ImageView
+        android:clickable="true"
         android:id="@+id/iv_cache_delete"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dp"

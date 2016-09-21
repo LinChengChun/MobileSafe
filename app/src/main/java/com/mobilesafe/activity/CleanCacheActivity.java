@@ -8,10 +8,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageStats;
 import android.os.RemoteException;
 import android.text.format.Formatter;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.mobilesafe.R;
@@ -39,6 +41,12 @@ public class CleanCacheActivity extends BaseActivity{
     @BindView(R.id.ll_clean_cache)
     LinearLayout llCleanCache;
 
+    @BindView(R.id.ll_root_clean_cache)
+    LinearLayout llRootCleanCache;
+
+    @BindView(R.id.sv_clean_cache)
+    ScrollView svCleanCache;
+
     private PackageManager pm;
 
     @Override
@@ -53,7 +61,22 @@ public class CleanCacheActivity extends BaseActivity{
 
     @Override
     protected void initListener() {
+        svCleanCache.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
 
+                LogUtil.d("svCleanCache onTouch: "+MotionEvent.actionToString(event.getAction()));
+                return false;
+            }
+        });
+
+        llCleanCache.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                LogUtil.d("llCleanCache onTouch: "+MotionEvent.actionToString(event.getAction()));
+                return false;
+            }
+        });
     }
 
     @Override
@@ -69,37 +92,47 @@ public class CleanCacheActivity extends BaseActivity{
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Method getPackageSizeInfoMethod = null;
 
-                Method[] methods = PackageManager.class.getMethods(); // 利用反射获取得到缓存的方法
-                for (Method method: methods){
-                    LogUtil.d("method:"+method.getName()+";para:"+method);
-                    if ("getPackageSizeInfo".equals(method.getName())){
-                        getPackageSizeInfoMethod = method;
+
+//                Method[] methods = PackageManager.class.getMethods(); // 利用反射获取得到缓存的方法
+//                for (Method method: methods){
+//                    LogUtil.d("method:"+method.getName()+";para:"+method);
+//                    if ("getPackageSizeInfo".equals(method.getName())){
+//                        getPackageSizeInfoMethod = method;
+//                    }
+//                }
+
+                try {
+                    Method getPackageSizeInfoMethod = null;
+                    getPackageSizeInfoMethod = PackageManager.class.
+                            getMethod("getPackageSizeInfo", String.class, IPackageStatsObserver.class); // 利用反射获取getPackageSizeInfo方法
+                    List<PackageInfo> packageInfos = pm.getInstalledPackages(0); // 获取系统已安装的应用包信息
+                    pbCleanCache.setMax(packageInfos.size()); // 设置进度条最大值
+                    int progress = 0;
+
+                    for (final PackageInfo packageInfo: packageInfos) { // 扫描每一个包信息
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvScanStatus.setText("正在扫描："+packageInfo.applicationInfo.loadLabel(pm).toString());
+                            }
+                        });
+
+                        getPackageSizeInfoMethod.invoke(pm, packageInfo.packageName, new MyStatsObserver());
+                        Thread.sleep(20);
+                        progress++;
+                        pbCleanCache.setProgress(progress); // 更新进度条，可以在子线程中更新
                     }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            tvScanStatus.setText("扫描完毕。。。");
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                List<PackageInfo> packageInfos = pm.getInstalledPackages(0); // 获取系统已安装的应用包信息
-                pbCleanCache.setMax(packageInfos.size());
-                int progress = 0;
-                for (PackageInfo info: packageInfos) { // 扫描每一个包信息
-                    LogUtil.d(info.applicationInfo.loadLabel(pm).toString());
-                    try {
-                        getPackageSizeInfoMethod.invoke(pm, info.packageName, 0,new MyStatsObserver());
-                        Thread.sleep(50);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    progress++;
-                    pbCleanCache.setProgress(progress); // 更新进度条
-                }
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        tvScanStatus.setText("扫描完毕。。。");
-                    }
-                });
             }
         }).start();
     }
@@ -125,7 +158,6 @@ public class CleanCacheActivity extends BaseActivity{
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        tvScanStatus.setText("正在扫描："+appInfo.loadLabel(pm));
                         if (cache > 0){
                             // 更新界面
                             View view = View.inflate(CleanCacheActivity.this, R.layout.list_item_cacheinfo, null);
@@ -140,12 +172,29 @@ public class CleanCacheActivity extends BaseActivity{
                             ivCacheDelete.setOnClickListener(new View.OnClickListener() { // 设置删除按钮点击逻辑
                                 @Override
                                 public void onClick(View v) {
+                                    LogUtil.d("ivCacheDelete onClick");
                                     try {
                                         Method method = PackageManager.class.getMethod("deleteApplicationCacheFiles", String.class, IPackageDataObserver.class);
                                         method.invoke(pm, packname, new MyDataObserver()); // 获取deleteApplicationCacheFiles方法
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
+                                }
+                            });
+
+                            view.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    LogUtil.d("view onTouch "+MotionEvent.actionToString(event.getAction()));
+                                    return false;
+                                }
+                            });
+
+                            ivCacheDelete.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    LogUtil.d("ivCacheDelete onTouch "+MotionEvent.actionToString(event.getAction()));
+                                    return false;
                                 }
                             });
 
@@ -186,6 +235,12 @@ public class CleanCacheActivity extends BaseActivity{
                 }
             }
         }
-
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        LogUtil.d("CleanCacheActivity Event: "+MotionEvent.actionToString(ev.getAction()));
+        return super.dispatchTouchEvent(ev);
+    }
+
 }
