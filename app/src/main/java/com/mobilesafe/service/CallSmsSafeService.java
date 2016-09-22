@@ -50,9 +50,9 @@ public class CallSmsSafeService extends Service {
         receiver = new InnerSmsReceiver(); // 实例化广播接收者
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
-        filter.setPriority(99999999); // 设置广播优先级
+        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY); // 设置广播优先级
         registerReceiver(receiver, filter); // 注册广播
-        dao = BlackNumberDao.getIntance(this); // 实例化数据库业务类
+        dao = BlackNumberDao.getIntance(getApplicationContext()); // 实例化数据库业务类
 
         telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE); // 获取电话管理器服务
         listener = new MyListener(); // 实例化监听器

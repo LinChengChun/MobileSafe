@@ -204,7 +204,7 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void initData() {
 
-        appLockDao = AppLockDao.getIntance(AppManagerActivity.this); // 获取Dao实例
+        appLockDao = AppLockDao.getIntance(getApplicationContext()); // 获取Dao实例
 
         long availRomSize = getAvailSpace(Environment.getDataDirectory().getAbsolutePath()); // 获取可用内存大小
         long availSdSize = getAvailSpace(Environment.getExternalStorageDirectory().getAbsolutePath()); // 获取SD卡可用内存大小

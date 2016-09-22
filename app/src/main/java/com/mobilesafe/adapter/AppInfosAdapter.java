@@ -38,7 +38,7 @@ public class AppInfosAdapter extends BaseAdapter {
         this.mAppInfos = list;
         this.mUserAppInfos = userAppInfos;
         this.mSystemAppInfos = systemAppInfos;
-        appLockDao = AppLockDao.getIntance(context);
+        appLockDao = AppLockDao.getIntance(context.getApplicationContext());
     }
 
     @Override

@@ -99,7 +99,7 @@ public class CallSmsSafeActivity extends BaseActivity implements CallSmsSafeAdap
 
     @Override
     protected void initData() {
-        mBlackNumberDao = BlackNumberDao.getIntance(CallSmsSafeActivity.this); // 实例化业务操作类
+        mBlackNumberDao = BlackNumberDao.getIntance(getApplicationContext()); // 实例化业务操作类
         loadingData(); // loading more Data
     }
 

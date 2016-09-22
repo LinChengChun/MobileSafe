@@ -49,7 +49,7 @@ public class WatchDogService extends Service{
         LogUtil.d(TAG+"onCreate");
         activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         usageStatsManager = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
-        appLockDao = AppLockDao.getIntance(this); // 获取操作类
+        appLockDao = AppLockDao.getIntance(getApplicationContext()); // 获取操作类
         protectPacknames = appLockDao.findAll(); // 将数据库记录加载到内存中
         isRunning = true; // 启动子线程
         enterPwdIntent = new Intent(getApplicationContext(), EnterPwdActivity.class); // 实例化Intent
