@@ -6,6 +6,7 @@ import android.net.TrafficStats;
 
 import com.mobilesafe.R;
 import com.mobilesafe.base.BaseActivity;
+import com.mobilesafe.utils.LogUtil;
 
 import java.util.List;
 
@@ -39,6 +40,9 @@ public class TrafficManagerActivity extends BaseActivity {
             int uid = info.uid;
             long tx = TrafficStats.getUidTxBytes(uid);
             long rx = TrafficStats.getUidRxBytes(uid);
+
+            LogUtil.d(info.loadLabel(pm).toString()+ "上传流量："+ android.text.format.Formatter.formatFileSize(TrafficManagerActivity.this, tx));
+            LogUtil.d(info.loadLabel(pm).toString()+ "下载流量："+ android.text.format.Formatter.formatFileSize(TrafficManagerActivity.this, rx));
             // 方法返回值 -1，代表的是应用程序没有产生流量或者操作系统不支持流量统计
         }
 
