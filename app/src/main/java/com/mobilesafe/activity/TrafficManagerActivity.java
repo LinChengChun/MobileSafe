@@ -31,26 +31,30 @@ public class TrafficManagerActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        // 1.获取包管理器
-        PackageManager pm = getPackageManager();
-        // 2.遍历手机操作系统 获取所有的应用程序uid
-        List<ApplicationInfo> applicationInfos = pm.getInstalledApplications(0);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 1.获取包管理器
+                PackageManager pm = getPackageManager();
+                // 2.遍历手机操作系统 获取所有的应用程序uid
+                List<ApplicationInfo> applicationInfos = pm.getInstalledApplications(0);
 
-        for (ApplicationInfo info:applicationInfos){
-            int uid = info.uid;
-            long tx = TrafficStats.getUidTxBytes(uid);
-            long rx = TrafficStats.getUidRxBytes(uid);
+                for (ApplicationInfo info:applicationInfos){
+                    int uid = info.uid;
+                    long tx = TrafficStats.getUidTxBytes(uid);
+                    long rx = TrafficStats.getUidRxBytes(uid);
 
-            LogUtil.d(info.loadLabel(pm).toString()+ "上传流量："+ android.text.format.Formatter.formatFileSize(TrafficManagerActivity.this, tx));
-            LogUtil.d(info.loadLabel(pm).toString()+ "下载流量："+ android.text.format.Formatter.formatFileSize(TrafficManagerActivity.this, rx));
-            // 方法返回值 -1，代表的是应用程序没有产生流量或者操作系统不支持流量统计
-        }
+                    LogUtil.d(info.loadLabel(pm).toString()+ "上传流量："+ android.text.format.Formatter.formatFileSize(TrafficManagerActivity.this, tx));
+                    LogUtil.d(info.loadLabel(pm).toString()+ "下载流量："+ android.text.format.Formatter.formatFileSize(TrafficManagerActivity.this, rx));
+                    // 方法返回值 -1，代表的是应用程序没有产生流量或者操作系统不支持流量统计
+                }
+            }
+        }).start();
 
-        TrafficStats.getMobileTxBytes();// 手机3g,2g接口，上传的总流量
-        TrafficStats.getMobileRxBytes();// 手机3g,2g接口，下载的总流量
-        TrafficStats.getTotalTxBytes(); // 手机全部网络接口，包括wifi,3g,2g上传的总流量
-        TrafficStats.getTotalRxBytes(); // 手机全部网络接口，包括wifi,3g,2g下载的总流量
-
+//        TrafficStats.getMobileTxBytes();// 手机3g,2g接口，上传的总流量
+//        TrafficStats.getMobileRxBytes();// 手机3g,2g接口，下载的总流量
+//        TrafficStats.getTotalTxBytes(); // 手机全部网络接口，包括wifi,3g,2g上传的总流量
+//        TrafficStats.getTotalRxBytes(); // 手机全部网络接口，包括wifi,3g,2g下载的总流量
 
     }
 }

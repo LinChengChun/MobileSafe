@@ -19,11 +19,13 @@ import android.telephony.TelephonyManager;
 
 import com.android.internal.telephony.ITelephony;
 import com.mobilesafe.activity.CallSmsSafeActivity;
+import com.mobilesafe.bean.BlackNumberInfo;
 import com.mobilesafe.db.dao.BlackNumberDao;
 import com.mobilesafe.utils.LogUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * 黑名单拦截服务
@@ -35,6 +37,8 @@ public class CallSmsSafeService extends Service {
     private BlackNumberDao dao; // 数据库操作管理类对象
     private TelephonyManager telephonyManager; // 电话管理器
     private MyListener listener; // 声明一个电话状态监听器
+    private ITelephony iTelephony; // 声明一个电话接口
+    private List<BlackNumberInfo> mBlackNumberInfos; // 把黑名单号码信息预先加载到内存中
 
     @Nullable
     @Override
@@ -46,16 +50,19 @@ public class CallSmsSafeService extends Service {
     public void onCreate() {
         super.onCreate();
         LogUtil.d("CallSmsSafeService: onCreate");
+        dao = BlackNumberDao.getIntance(getApplicationContext()); // 实例化数据库业务类
+        initInterface(); // 初始化电话操作接口
+        mBlackNumberInfos = dao.loadAllBlackNumber(); // 加载黑名单号码信息
 
         receiver = new InnerSmsReceiver(); // 实例化广播接收者
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
         filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY); // 设置广播优先级
         registerReceiver(receiver, filter); // 注册广播
-        dao = BlackNumberDao.getIntance(getApplicationContext()); // 实例化数据库业务类
 
         telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE); // 获取电话管理器服务
         listener = new MyListener(); // 实例化监听器
+
         telephonyManager.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
@@ -84,7 +91,7 @@ public class CallSmsSafeService extends Service {
             for (Object object:objects){
                 SmsMessage message = SmsMessage.createFromPdu((byte[]) object); // 获取每一个短信对象
                 String sender = message.getOriginatingAddress(); // 获取发送者
-                String result = dao.findMode(sender.substring(3)); // 查询该电话号码拦截方式
+                String result = findMode(sender.substring(3)); // 查询该电话号码拦截方式
 
                 LogUtil.d("CallSmsSafeService sender "+sender+";sender.substring: "+sender.substring(3));
                 LogUtil.d("CallSmsSafeService result "+result);
@@ -101,10 +108,10 @@ public class CallSmsSafeService extends Service {
 
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
-
+            LogUtil.d("state = "+state);
             switch (state){
                 case TelephonyManager.CALL_STATE_RINGING: // 电话铃声响起的时候，来电时
-                    String result = dao.findMode(incomingNumber); // 查询拦截模式
+                    String result = findMode(incomingNumber); // 查询拦截模式
 //                    String result = "3"; // 查询拦截模式
                     if ("1".equals(result) || "3".equals(result)){
                         LogUtil.d("该电话已经被设置为电话拦截，挂断电话");
@@ -162,14 +169,14 @@ public class CallSmsSafeService extends Service {
     }
 
     /**
-     * 结束通话，挂断电话
+     * 初始化电话监听接口
      */
-    public void endCall(){
+    private void initInterface(){
         try {
             Class clazz = CallSmsSafeActivity.class.getClassLoader().loadClass("android.os.ServiceManager");
             Method method = clazz.getDeclaredMethod("getService", String.class);
             IBinder iBinder = (IBinder) method.invoke(null, TELEPHONY_SERVICE);
-            ITelephony.Stub.asInterface(iBinder).endCall(); // IBinder强转换为ITelePhony对象
+            iTelephony = ITelephony.Stub.asInterface(iBinder); // IBinder强转换为ITelePhony对象
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
@@ -178,8 +185,27 @@ public class CallSmsSafeService extends Service {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+    }
+    /**
+     * 结束通话，挂断电话
+     */
+    public void endCall(){
+        try {
+            iTelephony.endCall();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    private String findMode(String incomingNumber){
+
+        for (BlackNumberInfo blackNumberInfo: mBlackNumberInfos){
+            if (blackNumberInfo.getNumber().contains(incomingNumber)){
+                // 找到黑名单号码
+                return blackNumberInfo.getMode();
+            }
+        }
+        return "0";
     }
 }

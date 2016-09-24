@@ -62,15 +62,34 @@ public class BlackNumberDao {
         LogUtil.d(number);
         SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
         Cursor cursor = db.rawQuery("select * from blacknumber where number=?", new String[]{number});
-//        LogUtil.d("cursor.getColumnCount() = "+cursor.getColumnCount());
-//        LogUtil.d("cursor.getColumnIndex(mode) = "+cursor.getColumnIndex("mode"));
         if (cursor.moveToNext()) {
-//            mode = cursor.getString(cursor.getColumnIndex("mode"));
             mode = cursor.getString(2);
         }
         cursor.close();
         db.close();
         return mode;
+    }
+
+    /**
+     * 预先加载所有的黑名单号码信息到内存中
+     * @return
+     */
+    public List<BlackNumberInfo> loadAllBlackNumber() {
+        List<BlackNumberInfo> mList = new ArrayList<BlackNumberInfo>();
+        SQLiteDatabase db = helper.getReadableDatabase(); // 获取(创建或打开)可读数据库
+        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc", null ); // 根据id号降序排列
+        while (cursor.moveToNext()) {
+            BlackNumberInfo info = new BlackNumberInfo();
+            String number = cursor.getString(0);
+            String mode = cursor.getString(1);
+            info.setNumber(number); // cursor.getColumnName(0)
+            info.setMode(mode); // cursor.getColumnName(1)
+            LogUtil.d(info.toString());
+            mList.add(info); //  添加到集合中
+        }
+        cursor.close();
+        db.close();
+        return mList;
     }
 
     /**
