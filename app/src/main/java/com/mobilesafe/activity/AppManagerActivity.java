@@ -221,9 +221,19 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
      */
     private long getAvailSpace(String path){
         StatFs statFs = new StatFs(path);
-        long size = statFs.getBlockSizeLong(); // 获取块大小
-        long allcount = statFs.getBlockCountLong(); // 获取块个数
-        long count = statFs.getAvailableBlocksLong(); // 获取可用块个数
+        long size = 0; // 获取块大小
+        long count = 0; // 获取可用块个数
+        long allcount = 0; // 获取全部块个数
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            size = statFs.getBlockSizeLong();
+            allcount = statFs.getBlockCountLong();
+            count = statFs.getAvailableBlocksLong();
+        }else {
+            size = statFs.getBlockSize();
+            allcount = statFs.getBlockCount();
+            count = statFs.getAvailableBlocks();
+        }
+
         return size * count;
     }
 

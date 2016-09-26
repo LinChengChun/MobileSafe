@@ -14,42 +14,61 @@
         android:background="#8866ff00"
         android:layout_gravity="center_horizontal" />
 
-    <View
-        android:layout_width="300dip"
-        android:layout_height="match_parent">
-    </View>
-
-    <SlidingDrawer
-        android:id="@+id/sd_mydrawer"
-        android:handle="@+id/my_handle"
-        android:content="@+id/my_content"
-        android:orientation="horizontal"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--把手的布局-->
-        <ImageView
-            android:id="@+id/my_handle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/lock"/>
-
-        <!--内容的布局-->
-        <LinearLayout
-            android:id="@+id/my_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@color/gold"
+        <ListView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/app_manager_layout_horizontal_margin"
+            android:layout_marginRight="@dimen/app_manager_layout_horizontal_margin"
+            android:layout_marginBottom="@dimen/app_manager_layout_horizontal_margin"
+            android:layout_marginTop="0dp"
+            android:fadeScrollbars="true"
+            android:divider="@color/colorPrimaryDark"
+            android:dividerHeight="1dp"
+            android:id="@+id/lv_app_traffic_state">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello world"
-                android:textSize="22sp"/>
+        </ListView>
+
+        <LinearLayout
+            android:id="@+id/ll_traffic_menu_view"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <View
+                android:layout_width="300dip"
+                android:layout_height="match_parent">
+            </View>
+
+            <SlidingDrawer
+                android:id="@+id/sd_mydrawer"
+                android:handle="@+id/my_handle"
+                android:content="@+id/my_content"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!--把手的布局-->
+                <ImageView
+                    android:id="@+id/my_handle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/lock"/>
+
+                <!--内容的布局-->
+                <GridView
+                    android:id="@+id/my_content"
+                    android:gravity="center"
+                    android:background="@color/moccasin"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </GridView>
+
+            </SlidingDrawer>
         </LinearLayout>
-
-    </SlidingDrawer>
+    </FrameLayout>
 
 </LinearLayout>

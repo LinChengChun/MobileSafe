@@ -48,18 +48,21 @@ public class WatchDogService extends Service{
     public void onCreate() {
         LogUtil.d(TAG+"onCreate");
         activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        usageStatsManager = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
+
         appLockDao = AppLockDao.getIntance(getApplicationContext()); // 获取操作类
         protectPacknames = appLockDao.findAll(); // 将数据库记录加载到内存中
         isRunning = true; // 启动子线程
         enterPwdIntent = new Intent(getApplicationContext(), EnterPwdActivity.class); // 实例化Intent
         enterPwdIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // 服务是没有任务栈信息的，在服务开启activity，需要创建一个新的堆栈
 
-        if (isNoSwitch()) { // 判断当前应用是否开启“有权查看使用权限的应用”这个选项
-            Intent intent = new Intent( Settings.ACTION_USAGE_ACCESS_SETTINGS);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            usageStatsManager = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
+            if (isNoSwitch()) { // 判断当前应用是否开启“有权查看使用权限的应用”这个选项
+                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                return;
+            }
         }
 
         receiver = new InnerReceiver();
@@ -79,11 +82,14 @@ public class WatchDogService extends Service{
             @Override
             public void run() {
                 while (isRunning){
-//                    List<ActivityManager.RunningTaskInfo> infos = activityManager.getRunningTasks(100);
-//                    LogUtil.d("infos.size = "+infos.size());
-//                    String packname = infos.get(0).topActivity.getPackageName();
-
-                    String packname = getRunningApp(); // 获取当前应用包名
+                    String packname = null;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+                        packname = getRunningApp(); // 获取当前应用包名
+                    }else {
+                        List<ActivityManager.RunningTaskInfo> infos = activityManager.getRunningTasks(100);
+                        LogUtil.d("infos.size = "+infos.size());
+                        packname = infos.get(0).topActivity.getPackageName();
+                    }
                     LogUtil.d(TAG+"当前用户操作程序:"+packname);
 
                     if (packname!=null && protectPacknames.contains(packname)){ // 查询数据库消耗资源，查询内存快一点
