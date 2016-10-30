@@ -51,6 +51,10 @@ public class AppInfoProvider {
             int uid = packageInfo.applicationInfo.uid;
             appInfo.setUid(uid);
 
+            appInfo.setSourceDir(packageInfo.applicationInfo.sourceDir);
+//            LogUtil.d(packageInfo.packageName+":"+packageInfo.applicationInfo.sourceDir);
+//            LogUtil.d(packageInfo.packageName+":"+packageInfo.applicationInfo.publicSourceDir);
+
 //            File rcvfile = new File("/proc/uid_stat/"+uid+"tcp_rcv");
 //            File sndfile = new File("/proc/uid_stat/"+uid+"tcp_snd");
 

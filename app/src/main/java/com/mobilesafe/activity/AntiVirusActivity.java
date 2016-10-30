@@ -209,7 +209,7 @@ public class AntiVirusActivity extends BaseActivity {
         return sb.toString();
     }
 
-    class ScanInfo{
+    static class ScanInfo{
         String packname;
         String name;
         boolean isAntiVirus;

@@ -31,6 +31,7 @@ import com.mobilesafe.utils.DesityUtil;
 import com.mobilesafe.utils.LogUtil;
 import com.mobilesafe.utils.PromptManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -273,7 +274,7 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
                 break;
 
             case R.id.ll_share:
-                LogUtil.d("分享应用: "+appInfo.getName());
+                LogUtil.d("分享应用: "+appInfo.getName()+":"+appInfo.getSourceDir());
                 shareApplication();
                 break;
         }
@@ -285,10 +286,13 @@ public class AppManagerActivity extends BaseActivity implements View.OnClickList
     private void shareApplication() {
         Intent intent = new Intent();
         intent.addCategory(Intent.CATEGORY_DEFAULT);
-
         intent.setAction(Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, "推荐您使用一款软件，名字叫："+appInfo.getName());
+
+//        intent.setType("text/plain");
+//        intent.putExtra(Intent.EXTRA_TEXT, "推荐您使用一款软件，名字叫："+appInfo.getName());
+        intent.setType("*/*"); // 此处可发送多种文件
+        File file = new File(appInfo.getSourceDir());
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
         startActivity(intent);
     }
 

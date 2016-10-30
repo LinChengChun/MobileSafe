@@ -13,7 +13,17 @@ public class AppInfo {
     private String packname; // 包名
     private boolean isRom; // 是否安装在内存
     private boolean userApp; // 是否用户应用
-    private int uid;
+    private int uid; // 每个应用不同的User Identifier，实现数据共享
+
+    public String getSourceDir() {
+        return sourceDir;
+    }
+
+    public void setSourceDir(String sourceDir) {
+        this.sourceDir = sourceDir;
+    }
+
+    private String sourceDir; // 应用安装路径
 
     public int getUid() {
         return uid;
